@@ -160,6 +160,16 @@
             color: #fff;
         }
 
+        .user-badge {
+            font-size: 0.8rem;
+            background: var(--bg-card);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            color: var(--accent-gold);
+            margin-right: 1rem;
+        }
+
         .btn-logout {
             width: auto;
             padding: 0.5rem 1.2rem;
@@ -311,6 +321,58 @@
             line-height: 1.4;
         }
 
+        /* MODAL / NOTA STRUCT STYLES */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .receipt-card {
+            background: #fff;
+            color: #000;
+            width: 100%;
+            max-width: 420px;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+        }
+
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px dashed #ccc;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .receipt-header h2 { font-size: 1.3rem; color: #111; }
+        .receipt-header p { font-size: 0.8rem; color: #555; }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .receipt-total {
+            border-top: 2px dashed #ccc;
+            padding-top: 0.8rem;
+            margin-top: 0.8rem;
+            font-weight: bold;
+        }
+
+        .btn-print {
+            background: #111;
+            color: #fff;
+            margin-top: 1rem;
+            border-radius: 6px;
+        }
+
         .tab-content { display: none; }
         .tab-content.active { display: block; }
     </style>
@@ -328,11 +390,11 @@
         <form id="login-form">
             <div class="input-group">
                 <label><i class="fa-solid fa-user"></i> Username</label>
-                <input type="text" id="username" placeholder="Masukkan admin" required autocomplete="off">
+                <input type="text" id="username" placeholder="admin1 / admin2 / admin3 / staff" required autocomplete="off">
             </div>
             <div class="input-group">
                 <label><i class="fa-solid fa-lock"></i> Password</label>
-                <input type="password" id="password" placeholder="Masukkan 123" required>
+                <input type="password" id="password" placeholder="Masukkan password" required>
             </div>
             <button type="submit" id="btn-login-submit" class="btn"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
         </form>
@@ -345,7 +407,10 @@
                 <img src="assets/hans.jpg" alt="Hans Logo" class="header-logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/45/ff3333/ffffff?text=H';">
                 <h1>Hans Management System</h1>
             </div>
-            <button class="btn btn-logout" onclick="logout()"><i class="fa-solid fa-power-off"></i> Keluar</button>
+            <div>
+                <span class="user-badge" id="logged-user-label"><i class="fa-solid fa-user-shield"></i> User</span>
+                <button class="btn btn-logout" onclick="logout()"><i class="fa-solid fa-power-off"></i> Keluar</button>
+            </div>
         </header>
 
         <div class="summary-cards">
@@ -415,7 +480,7 @@
                         </div>
 
                         <div class="input-group">
-                            <label>Cas Ukuran Size (misal: 2XL, 3XL, dll) (Rp)</label>
+                            <label>Cas Ukuran Size (misal: 2XL, 3XL) (Rp)</label>
                             <input type="number" id="charge-size" placeholder="Total cas ukuran" value="0">
                         </div>
 
@@ -429,7 +494,7 @@
                             <label>Upload Desain / Gambar</label>
                             <input type="file" id="cust-img" accept="image/*" required>
                         </div>
-                        <button type="submit" class="btn"><i class="fa-solid fa-plus"></i> Simpan Order</button>
+                        <button type="submit" class="btn"><i class="fa-solid fa-plus"></i> Simpan Order & Cetak Nota</button>
                     </form>
                 </div>
 
@@ -446,7 +511,7 @@
                                     <th>Total & DP</th>
                                     <th>Sisa Tagihan</th>
                                     <th>Status</th>
-                                    <th>Aksi</th>
+                                    <th id="action-header">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="order-table-body"></tbody>
@@ -507,13 +572,30 @@
 
     </div>
 
+    <!-- MODAL RINCIAN / NOTA STRUCT -->
+    <div id="receipt-modal" class="modal">
+        <div class="receipt-card">
+            <div class="receipt-header">
+                <h2>HANS SCREEN PRINTING</h2>
+                <p>Nota Rincian Pemesanan</p>
+            </div>
+            <div id="receipt-details"></div>
+            <button class="btn btn-print" onclick="closeReceipt()"><i class="fa-solid fa-check"></i> Selesai & Tutup</button>
+        </div>
+    </div>
+
     <script>
+        // DAFTAR 3 ADMIN YANG BERHAK MENGHAPUS DATA
+        const ADMIN_USERS = ['admin1', 'admin2', 'admin3'];
+
         let orders = [];
         let finances = [];
+        let currentUser = null;
 
         try {
             orders = JSON.parse(localStorage.getItem('hans_orders')) || [];
             finances = JSON.parse(localStorage.getItem('hans_finances')) || [];
+            currentUser = localStorage.getItem('hans_logged_user');
         } catch (err) {
             console.error('LocalStorage error:', err);
         }
@@ -523,6 +605,11 @@
             if(document.getElementById('date-in')) document.getElementById('date-in').value = today;
             if(document.getElementById('finance-date')) document.getElementById('finance-date').value = today;
             
+            // AUTO LOGIN JIKA SUDAH PERNAH LOGIN SEBELUMNYA
+            if (currentUser) {
+                showDashboard(currentUser);
+            }
+
             const loginForm = document.getElementById('login-form');
             if (loginForm) {
                 loginForm.onsubmit = function(e) {
@@ -531,20 +618,33 @@
                     const user = document.getElementById('username').value.trim().toLowerCase();
                     const pass = document.getElementById('password').value.trim();
 
-                    if (user === 'admin' && pass === '123') {
-                        document.getElementById('login-section').style.display = 'none';
-                        document.getElementById('dashboard-section').style.display = 'block';
-                        document.body.style.alignItems = 'flex-start';
-                        renderAll();
+                    // VALIDASI USER: Password standar 123 (bisa disesuaikan)
+                    if (pass === '123') {
+                        localStorage.setItem('hans_logged_user', user);
+                        showDashboard(user);
                     } else {
-                        alert('Username atau Password salah!\n\nUsername: admin\nPassword: 123');
+                        alert('Password salah!\nGunakan Password: 123');
                     }
                     return false;
                 };
             }
         };
 
+        function showDashboard(username) {
+            currentUser = username;
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('dashboard-section').style.display = 'block';
+            document.body.style.alignItems = 'flex-start';
+            
+            const isDeleteAllowed = ADMIN_USERS.includes(currentUser);
+            document.getElementById('logged-user-label').innerHTML = `<i class="fa-solid fa-user"></i> ${currentUser} ${isDeleteAllowed ? '(Admin)' : '(Staff)'}`;
+            
+            renderAll();
+        }
+
         function logout() {
+            localStorage.removeItem('hans_logged_user');
+            currentUser = null;
             document.getElementById('dashboard-section').style.display = 'none';
             document.getElementById('login-section').style.display = 'block';
             document.body.style.alignItems = 'center';
@@ -617,12 +717,69 @@
 
                     saveData();
                     renderAll();
+                    
+                    // TAMPILKAN STRUCT / NOTA RINCIAN
+                    showReceipt(newOrder);
+
                     document.getElementById('order-form').reset();
                     document.getElementById('date-in').value = new Date().toISOString().split('T')[0];
                 };
                 reader.readAsDataURL(imgFile);
             }
         });
+
+        // FUNGSI TAMPILKAN NOTA RINCIAN
+        function showReceipt(order) {
+            const container = document.getElementById('receipt-details');
+            let itemsHtml = '';
+
+            if (order.qtyShort > 0) {
+                itemsHtml += `
+                    <div class="receipt-row">
+                        <span>Lengan Pendek (${order.qtyShort}x @${formatRp(order.priceShort)})</span>
+                        <span>${formatRp(order.qtyShort * order.priceShort)}</span>
+                    </div>`;
+            }
+            if (order.qtyLong > 0) {
+                itemsHtml += `
+                    <div class="receipt-row">
+                        <span>Lengan Panjang (${order.qtyLong}x @${formatRp(order.priceLong)})</span>
+                        <span>${formatRp(order.qtyLong * order.priceLong)}</span>
+                    </div>`;
+            }
+            if (order.chargeSize > 0) {
+                itemsHtml += `
+                    <div class="receipt-row">
+                        <span>Cas Ukuran Size</span>
+                        <span>${formatRp(order.chargeSize)}</span>
+                    </div>`;
+            }
+
+            container.innerHTML = `
+                <div class="receipt-row"><strong>Nama Customer:</strong> <span>${order.name}</span></div>
+                <div class="receipt-row"><strong>Tgl Masuk:</strong> <span>${order.dateIn}</span></div>
+                <div class="receipt-row"><strong>Deadline:</strong> <span>${order.dateDeadline}</span></div>
+                <br>
+                ${itemsHtml}
+                <div class="receipt-row receipt-total">
+                    <span>Total Tagihan</span>
+                    <span>${formatRp(order.totalAmount)}</span>
+                </div>
+                <div class="receipt-row">
+                    <span>Uang Muka (DP)</span>
+                    <span style="color:green;">-${formatRp(order.dpAmount)}</span>
+                </div>
+                <div class="receipt-row receipt-total" style="color:red;">
+                    <span>Sisa Pembayaran</span>
+                    <span>${formatRp(order.remainingAmount)}</span>
+                </div>
+            `;
+            document.getElementById('receipt-modal').style.display = 'flex';
+        }
+
+        function closeReceipt() {
+            document.getElementById('receipt-modal').style.display = 'none';
+        }
 
         document.getElementById('finance-form').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -657,15 +814,27 @@
         }
 
         function deleteOrder(id) {
-            orders = orders.filter(o => o.id !== id);
-            saveData();
-            renderOrders();
+            if (!ADMIN_USERS.includes(currentUser)) {
+                alert('Akses Ditolak! Hanya 3 Admin yang memiliki hak izin menghapus.');
+                return;
+            }
+            if (confirm('Apakah Anda yakin ingin menghapus pesanan ini?')) {
+                orders = orders.filter(o => o.id !== id);
+                saveData();
+                renderOrders();
+            }
         }
 
         function deleteFinance(id) {
-            finances = finances.filter(f => f.id !== id);
-            saveData();
-            renderFinances();
+            if (!ADMIN_USERS.includes(currentUser)) {
+                alert('Akses Ditolak! Hanya 3 Admin yang memiliki hak izin menghapus.');
+                return;
+            }
+            if (confirm('Apakah Anda yakin ingin menghapus catatan transaksi ini?')) {
+                finances = finances.filter(f => f.id !== id);
+                saveData();
+                renderFinances();
+            }
         }
 
         function saveData() {
@@ -681,6 +850,8 @@
             const tbody = document.getElementById('order-table-body');
             tbody.innerHTML = '';
 
+            const isDeleteAllowed = ADMIN_USERS.includes(currentUser);
+
             orders.forEach(order => {
                 const badgeClass = order.status === 'Selesai' ? 'badge-done' : 'badge-pending';
                 
@@ -688,6 +859,11 @@
                 if(order.qtyShort > 0) details += `Pendek: ${order.qtyShort}x @${formatRp(order.priceShort)}<br>`;
                 if(order.qtyLong > 0) details += `Panjang: ${order.qtyLong}x @${formatRp(order.priceLong)}<br>`;
                 if(order.chargeSize > 0) details += `Cas Size: ${formatRp(order.chargeSize)}<br>`;
+
+                // Tombol Hapus hanya muncul jika login sebagai admin1, admin2, atau admin3
+                const deleteBtnHtml = isDeleteAllowed ? 
+                    `<button class="action-btn" onclick="deleteOrder(${order.id})"><i class="fa-solid fa-trash"></i></button>` : 
+                    `<span style="color:var(--text-muted); font-size:0.75rem;">No Access</span>`;
 
                 tbody.innerHTML += `
                     <tr>
@@ -708,7 +884,7 @@
                         </td>
                         <td style="color: var(--danger); font-weight:600;">${formatRp(order.remainingAmount)}</td>
                         <td><span class="badge ${badgeClass}" onclick="toggleStatus(${order.id})">${order.status}</span></td>
-                        <td><button class="action-btn" onclick="deleteOrder(${order.id})"><i class="fa-solid fa-trash"></i></button></td>
+                        <td>${deleteBtnHtml}</td>
                     </tr>
                 `;
             });
@@ -717,6 +893,8 @@
         function renderFinances() {
             const tbody = document.getElementById('finance-table-body');
             tbody.innerHTML = '';
+
+            const isDeleteAllowed = ADMIN_USERS.includes(currentUser);
 
             let totalIn = 0;
             let totalOut = 0;
@@ -728,13 +906,17 @@
                 const typeColor = f.type === 'income' ? 'var(--success)' : 'var(--danger)';
                 const typeText = f.type === 'income' ? 'Pemasukan' : 'Pengeluaran';
 
+                const deleteBtnHtml = isDeleteAllowed ? 
+                    `<button class="action-btn" onclick="deleteFinance(${f.id})"><i class="fa-solid fa-trash"></i></button>` : 
+                    `<span style="color:var(--text-muted); font-size:0.75rem;">No Access</span>`;
+
                 tbody.innerHTML += `
                     <tr>
                         <td>${f.date}</td>
                         <td>${f.desc}</td>
                         <td style="color: ${typeColor}">${typeText}</td>
                         <td><strong>${formatRp(f.amount)}</strong></td>
-                        <td><button class="action-btn" onclick="deleteFinance(${f.id})"><i class="fa-solid fa-trash"></i></button></td>
+                        <td>${deleteBtnHtml}</td>
                     </tr>
                 `;
             });
