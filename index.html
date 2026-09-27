@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hans - App Keuangan & Order</title>
-    <!-- Google Fonts & FontAwesome Icons -->
+    <!-- Google Fonts & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -114,6 +114,12 @@
             box-shadow: 0 0 8px rgba(255, 51, 51, 0.4);
         }
 
+        .row-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
         .btn {
             width: 100%;
             padding: 0.8rem;
@@ -135,7 +141,7 @@
         #dashboard-section {
             display: none;
             width: 100%;
-            max-width: 1250px;
+            max-width: 1350px;
             padding: 2rem;
             min-height: 100vh;
         }
@@ -160,7 +166,6 @@
             background: var(--danger);
         }
 
-        /* Ringkasan Cards */
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -190,14 +195,13 @@
         .card.expense .amount { color: var(--danger); }
         .card.balance .amount { color: var(--accent-gold); }
 
-        /* Grid Layout */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 2fr;
             gap: 1.5rem;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 950px) {
             .main-grid { grid-template-columns: 1fr; }
         }
 
@@ -217,7 +221,14 @@
             gap: 0.5rem;
         }
 
-        /* Tabs */
+        .section-title {
+            font-size: 0.9rem;
+            color: var(--accent-red);
+            margin: 1rem 0 0.5rem 0;
+            border-bottom: 1px dashed var(--border-color);
+            padding-bottom: 0.3rem;
+        }
+
         .tabs {
             display: flex;
             gap: 1rem;
@@ -243,7 +254,6 @@
             color: var(--accent-red);
         }
 
-        /* Tabel Design */
         .table-responsive {
             overflow-x: auto;
         }
@@ -252,7 +262,7 @@
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            font-size: 0.88rem;
+            font-size: 0.85rem;
         }
 
         th, td {
@@ -295,6 +305,12 @@
             font-size: 1rem;
         }
 
+        .detail-text {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
         .tab-content { display: none; }
         .tab-content.active { display: block; }
     </style>
@@ -304,7 +320,7 @@
     <!-- HALAMAN LOGIN -->
     <div id="login-section">
         <div class="logo-wrapper">
-            <img src="assets/hans.jpg" alt="Hans Logo" class="brand-logo" onerror="this.src='https://via.placeholder.com/90/ff3333/ffffff?text=HANS'">
+            <img src="assets/hans.jpg" alt="Hans Logo" class="brand-logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/90/ff3333/ffffff?text=HANS';">
         </div>
         <h2>Hans Screen Printing</h2>
         <p>Sistem Manajemen Order & Keuangan</p>
@@ -318,7 +334,7 @@
                 <label><i class="fa-solid fa-lock"></i> Password</label>
                 <input type="password" id="password" placeholder="Masukkan 123" required>
             </div>
-            <button type="submit" class="btn"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+            <button type="submit" id="btn-login-submit" class="btn"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
         </form>
     </div>
 
@@ -326,13 +342,12 @@
     <div id="dashboard-section">
         <header>
             <div class="header-brand">
-                <img src="assets/hans.jpg" alt="Hans Logo" class="header-logo" onerror="this.src='https://via.placeholder.com/45/ff3333/ffffff?text=H'">
+                <img src="assets/hans.jpg" alt="Hans Logo" class="header-logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/45/ff3333/ffffff?text=H';">
                 <h1>Hans Management System</h1>
             </div>
             <button class="btn btn-logout" onclick="logout()"><i class="fa-solid fa-power-off"></i> Keluar</button>
         </header>
 
-        <!-- Ringkasan Keuangan -->
         <div class="summary-cards">
             <div class="card income">
                 <h3>Total Pemasukan Harian</h3>
@@ -348,7 +363,6 @@
             </div>
         </div>
 
-        <!-- Tab Navigasi -->
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('orders-tab', this)"><i class="fa-solid fa-users"></i> Customer & Order</button>
             <button class="tab-btn" onclick="switchTab('finance-tab', this)"><i class="fa-solid fa-calendar-day"></i> Keuangan Harian</button>
@@ -357,7 +371,6 @@
         <!-- TAB 1: CUSTOMER & ORDER -->
         <div id="orders-tab" class="tab-content active">
             <div class="main-grid">
-                <!-- Form Input Order -->
                 <div class="panel">
                     <h2><i class="fa-solid fa-cart-plus"></i> Form Order Customer</h2>
                     <form id="order-form">
@@ -365,17 +378,52 @@
                             <label>Nama Customer</label>
                             <input type="text" id="cust-name" placeholder="Nama Pelanggan" required>
                         </div>
-                        <div class="input-group">
-                            <label>Tanggal Masuk</label>
-                            <input type="date" id="date-in" required>
+                        <div class="row-group">
+                            <div class="input-group">
+                                <label>Tanggal Masuk</label>
+                                <input type="date" id="date-in" required>
+                            </div>
+                            <div class="input-group">
+                                <label>Tanggal Deadline</label>
+                                <input type="date" id="date-deadline" required>
+                            </div>
                         </div>
-                        <div class="input-group">
-                            <label>Tanggal Deadline</label>
-                            <input type="date" id="date-deadline" required>
+
+                        <!-- OPSI LENGAN & HARGA -->
+                        <div class="section-title"><i class="fa-solid fa-shirt"></i> Rincian Kaos & Harga</div>
+                        
+                        <div class="row-group">
+                            <div class="input-group">
+                                <label>Qty Lengan Pendek</label>
+                                <input type="number" id="qty-short" placeholder="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label>Harga Pendek / Pcs (Rp)</label>
+                                <input type="number" id="price-short" placeholder="0" value="0">
+                            </div>
                         </div>
+
+                        <div class="row-group">
+                            <div class="input-group">
+                                <label>Qty Lengan Panjang</label>
+                                <input type="number" id="qty-long" placeholder="0" value="0">
+                            </div>
+                            <div class="input-group">
+                                <label>Harga Panjang / Pcs (Rp)</label>
+                                <input type="number" id="price-long" placeholder="0" value="0">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Cas Ukuran Size (misal: 2XL, 3XL, dll) (Rp)</label>
+                            <input type="number" id="charge-size" placeholder="Total cas ukuran" value="0">
+                        </div>
+
+                        <div class="section-title"><i class="fa-solid fa-wallet"></i> Pembayaran</div>
+
                         <div class="input-group">
                             <label>DP Order (Rp)</label>
-                            <input type="number" id="dp-amount" placeholder="0" required>
+                            <input type="number" id="dp-amount" placeholder="0" value="0">
                         </div>
                         <div class="input-group">
                             <label>Upload Desain / Gambar</label>
@@ -385,7 +433,6 @@
                     </form>
                 </div>
 
-                <!-- Tabel Order Customer -->
                 <div class="panel">
                     <h2><i class="fa-solid fa-list"></i> Daftar Order Masuk</h2>
                     <div class="table-responsive">
@@ -394,9 +441,10 @@
                                 <tr>
                                     <th>Desain</th>
                                     <th>Nama Customer</th>
-                                    <th>Tgl Masuk</th>
-                                    <th>Deadline</th>
-                                    <th>DP Order</th>
+                                    <th>Tgl & Deadline</th>
+                                    <th>Rincian Order</th>
+                                    <th>Total & DP</th>
+                                    <th>Sisa Tagihan</th>
                                     <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -411,7 +459,6 @@
         <!-- TAB 2: KEUANGAN HARIAN -->
         <div id="finance-tab" class="tab-content">
             <div class="main-grid">
-                <!-- Form Input Keuangan -->
                 <div class="panel">
                     <h2><i class="fa-solid fa-money-bill-wave"></i> Input Keuangan Harian</h2>
                     <form id="finance-form">
@@ -438,7 +485,6 @@
                     </form>
                 </div>
 
-                <!-- Tabel Keuangan Harian -->
                 <div class="panel">
                     <h2><i class="fa-solid fa-receipt"></i> Laporan Keuangan Harian</h2>
                     <div class="table-responsive">
@@ -461,41 +507,42 @@
 
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Memuat data dari LocalStorage
-        let orders = JSON.parse(localStorage.getItem('hans_orders')) || [];
-        let finances = JSON.parse(localStorage.getItem('hans_finances')) || [];
+        let orders = [];
+        let finances = [];
 
-        document.addEventListener('DOMContentLoaded', () => {
+        try {
+            orders = JSON.parse(localStorage.getItem('hans_orders')) || [];
+            finances = JSON.parse(localStorage.getItem('hans_finances')) || [];
+        } catch (err) {
+            console.error('LocalStorage error:', err);
+        }
+
+        window.onload = function() {
             const today = new Date().toISOString().split('T')[0];
-            document.getElementById('date-in').value = today;
-            document.getElementById('finance-date').value = today;
+            if(document.getElementById('date-in')) document.getElementById('date-in').value = today;
+            if(document.getElementById('finance-date')) document.getElementById('finance-date').value = today;
             
-            // Pasang event listener untuk login form secara eksplisit
             const loginForm = document.getElementById('login-form');
             if (loginForm) {
-                loginForm.addEventListener('submit', handleLogin);
-            }
-        });
+                loginForm.onsubmit = function(e) {
+                    e.preventDefault();
+                    
+                    const user = document.getElementById('username').value.trim().toLowerCase();
+                    const pass = document.getElementById('password').value.trim();
 
-        // Fungsi Login yang Diperbaiki
-        function handleLogin(e) {
-            e.preventDefault();
-            
-            const user = document.getElementById('username').value.trim().toLowerCase();
-            const pass = document.getElementById('password').value.trim();
-
-            // Verifikasi (username: admin, password: 123)
-            if (user === 'admin' && pass === '123') {
-                document.getElementById('login-section').style.display = 'none';
-                document.getElementById('dashboard-section').style.display = 'block';
-                document.body.style.alignItems = 'flex-start';
-                renderAll();
-            } else {
-                alert('Username atau Password salah!\nGunakan:\nUsername: admin\nPassword: 123');
+                    if (user === 'admin' && pass === '123') {
+                        document.getElementById('login-section').style.display = 'none';
+                        document.getElementById('dashboard-section').style.display = 'block';
+                        document.body.style.alignItems = 'flex-start';
+                        renderAll();
+                    } else {
+                        alert('Username atau Password salah!\n\nUsername: admin\nPassword: 123');
+                    }
+                    return false;
+                };
             }
-        }
+        };
 
         function logout() {
             document.getElementById('dashboard-section').style.display = 'none';
@@ -504,7 +551,6 @@
             document.getElementById('login-form').reset();
         }
 
-        // Tab Switcher
         function switchTab(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -513,19 +559,29 @@
             btn.classList.add('active');
         }
 
-        // Format Rupiah
         function formatRp(amount) {
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(amount);
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(amount || 0);
         }
 
-        // Submit Form Order
         document.getElementById('order-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const name = document.getElementById('cust-name').value;
             const dateIn = document.getElementById('date-in').value;
             const dateDeadline = document.getElementById('date-deadline').value;
+
+            const qtyShort = parseInt(document.getElementById('qty-short').value) || 0;
+            const priceShort = parseFloat(document.getElementById('price-short').value) || 0;
+            
+            const qtyLong = parseInt(document.getElementById('qty-long').value) || 0;
+            const priceLong = parseFloat(document.getElementById('price-long').value) || 0;
+
+            const chargeSize = parseFloat(document.getElementById('charge-size').value) || 0;
             const dpAmount = parseFloat(document.getElementById('dp-amount').value) || 0;
+
+            const totalAmount = (qtyShort * priceShort) + (qtyLong * priceLong) + chargeSize;
+            const remainingAmount = totalAmount - dpAmount;
+
             const imgFile = document.getElementById('cust-img').files[0];
 
             if (imgFile) {
@@ -536,13 +592,19 @@
                         name: name,
                         dateIn: dateIn,
                         dateDeadline: dateDeadline,
+                        qtyShort: qtyShort,
+                        priceShort: priceShort,
+                        qtyLong: qtyLong,
+                        priceLong: priceLong,
+                        chargeSize: chargeSize,
+                        totalAmount: totalAmount,
                         dpAmount: dpAmount,
+                        remainingAmount: remainingAmount,
                         imgBase64: evt.target.result,
                         status: 'Proses'
                     };
                     orders.push(newOrder);
 
-                    // Otomatis masukkan DP ke Pemasukan Keuangan Harian
                     if (dpAmount > 0) {
                         finances.push({
                             id: Date.now() + 1,
@@ -562,7 +624,6 @@
             }
         });
 
-        // Submit Form Keuangan
         document.getElementById('finance-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -608,8 +669,12 @@
         }
 
         function saveData() {
-            localStorage.setItem('hans_orders', JSON.stringify(orders));
-            localStorage.setItem('hans_finances', JSON.stringify(finances));
+            try {
+                localStorage.setItem('hans_orders', JSON.stringify(orders));
+                localStorage.setItem('hans_finances', JSON.stringify(finances));
+            } catch (e) {
+                console.error('Gagal menyimpan ke LocalStorage:', e);
+            }
         }
 
         function renderOrders() {
@@ -618,13 +683,30 @@
 
             orders.forEach(order => {
                 const badgeClass = order.status === 'Selesai' ? 'badge-done' : 'badge-pending';
+                
+                let details = '';
+                if(order.qtyShort > 0) details += `Pendek: ${order.qtyShort}x @${formatRp(order.priceShort)}<br>`;
+                if(order.qtyLong > 0) details += `Panjang: ${order.qtyLong}x @${formatRp(order.priceLong)}<br>`;
+                if(order.chargeSize > 0) details += `Cas Size: ${formatRp(order.chargeSize)}<br>`;
+
                 tbody.innerHTML += `
                     <tr>
                         <td><img src="${order.imgBase64}" class="img-preview" onclick="window.open('${order.imgBase64}')" title="Klik untuk melihat gambar"></td>
                         <td><strong>${order.name}</strong></td>
-                        <td>${order.dateIn}</td>
-                        <td>${order.dateDeadline}</td>
-                        <td style="color: var(--success); font-weight:600;">${formatRp(order.dpAmount)}</td>
+                        <td>
+                            <div class="detail-text">
+                                Masuk: ${order.dateIn}<br>
+                                <span style="color:var(--accent-gold)">Deadln: ${order.dateDeadline}</span>
+                            </div>
+                        </td>
+                        <td><div class="detail-text">${details || '-'}</div></td>
+                        <td>
+                            <div class="detail-text">
+                                Total: <strong>${formatRp(order.totalAmount)}</strong><br>
+                                DP: <span style="color:var(--success)">${formatRp(order.dpAmount)}</span>
+                            </div>
+                        </td>
+                        <td style="color: var(--danger); font-weight:600;">${formatRp(order.remainingAmount)}</td>
                         <td><span class="badge ${badgeClass}" onclick="toggleStatus(${order.id})">${order.status}</span></td>
                         <td><button class="action-btn" onclick="deleteOrder(${order.id})"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>
