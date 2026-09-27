@@ -27,6 +27,7 @@
             --border-color: #2a364f;
             --danger: #ff4d4d;
             --success: #00e676;
+            --info-blue: #00b0ff;
         }
 
         body {
@@ -98,7 +99,7 @@
             margin-bottom: 0.4rem;
         }
 
-        .input-group input, .input-group select {
+        .input-group input, .input-group select, .input-group textarea {
             width: 100%;
             padding: 0.75rem 1rem;
             background: var(--bg-card);
@@ -109,7 +110,12 @@
             transition: all 0.3s;
         }
 
-        .input-group input:focus, .input-group select:focus {
+        .input-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
             border-color: var(--accent-red);
             box-shadow: 0 0 8px rgba(255, 51, 51, 0.4);
         }
@@ -178,7 +184,7 @@
 
         .summary-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
@@ -204,6 +210,7 @@
         .card.income .amount { color: var(--success); }
         .card.expense .amount { color: var(--danger); }
         .card.balance .amount { color: var(--accent-gold); }
+        .card.quantity .amount { color: var(--info-blue); }
 
         .main-grid {
             display: grid;
@@ -220,6 +227,7 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
         .panel h2 {
@@ -319,6 +327,16 @@
             font-size: 0.78rem;
             color: var(--text-muted);
             line-height: 1.4;
+        }
+
+        .size-box {
+            background: var(--bg-card);
+            border-left: 3px solid var(--info-blue);
+            padding: 0.4rem 0.6rem;
+            font-size: 0.75rem;
+            margin-top: 0.4rem;
+            border-radius: 0 4px 4px 0;
+            color: #fff;
         }
 
         /* MODAL / NOTA STRUCT STYLES */
@@ -426,10 +444,15 @@
                 <h3>Sisa Saldo Kas</h3>
                 <div class="amount" id="total-balance">Rp 0</div>
             </div>
+            <div class="card quantity">
+                <h3>Total Kaos Diproduksi</h3>
+                <div class="amount" id="total-pcs">0 Pcs</div>
+            </div>
         </div>
 
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('orders-tab', this)"><i class="fa-solid fa-users"></i> Customer & Order</button>
+            <button class="tab-btn" onclick="switchTab('size-monitor-tab', this)"><i class="fa-solid fa-ruler-combined"></i> Monitor Ukuran (Size)</button>
             <button class="tab-btn" onclick="switchTab('finance-tab', this)"><i class="fa-solid fa-calendar-day"></i> Keuangan Harian</button>
         </div>
 
@@ -454,7 +477,7 @@
                             </div>
                         </div>
 
-                        <!-- OPSI LENGAN & HARGA -->
+                        <!-- OPSI LENGAN, SIZE, & HARGA -->
                         <div class="section-title"><i class="fa-solid fa-shirt"></i> Rincian Kaos & Harga</div>
                         
                         <div class="row-group">
@@ -477,6 +500,12 @@
                                 <label>Harga Panjang / Pcs (Rp)</label>
                                 <input type="number" id="price-long" placeholder="0" value="0">
                             </div>
+                        </div>
+
+                        <!-- CATATAN DETAIL SIZE -->
+                        <div class="input-group">
+                            <label><i class="fa-solid fa-tags"></i> Rincian Size / Ukuran Kaos</label>
+                            <textarea id="size-details" placeholder="Contoh: S: 5, M: 10, L: 12, XL: 8, XXL: 2"></textarea>
                         </div>
 
                         <div class="input-group">
@@ -507,7 +536,7 @@
                                     <th>Desain</th>
                                     <th>Nama Customer</th>
                                     <th>Tgl & Deadline</th>
-                                    <th>Rincian Order</th>
+                                    <th>Rincian Order & Size</th>
                                     <th>Total & DP</th>
                                     <th>Sisa Tagihan</th>
                                     <th>Status</th>
@@ -521,7 +550,30 @@
             </div>
         </div>
 
-        <!-- TAB 2: KEUANGAN HARIAN -->
+        <!-- TAB 2: MONITOR UKURAN (SIZE) -->
+        <div id="size-monitor-tab" class="tab-content">
+            <div class="panel">
+                <h2><i class="fa-solid fa-ruler-combined"></i> Monitoring Rincian Size Kaos (Produksi)</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Desain</th>
+                                <th>Nama Customer</th>
+                                <th>Lengan Pendek</th>
+                                <th>Lengan Panjang</th>
+                                <th>Total Pcs</th>
+                                <th>Rincian Ukuran (Size)</th>
+                                <th>Status Order</th>
+                            </tr>
+                        </thead>
+                        <tbody id="size-monitor-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: KEUANGAN HARIAN -->
         <div id="finance-tab" class="tab-content">
             <div class="main-grid">
                 <div class="panel">
@@ -676,6 +728,8 @@
             const qtyLong = parseInt(document.getElementById('qty-long').value) || 0;
             const priceLong = parseFloat(document.getElementById('price-long').value) || 0;
 
+            const sizeDetails = document.getElementById('size-details').value.trim();
+
             const chargeSize = parseFloat(document.getElementById('charge-size').value) || 0;
             const dpAmount = parseFloat(document.getElementById('dp-amount').value) || 0;
 
@@ -696,6 +750,7 @@
                         priceShort: priceShort,
                         qtyLong: qtyLong,
                         priceLong: priceLong,
+                        sizeDetails: sizeDetails,
                         chargeSize: chargeSize,
                         totalAmount: totalAmount,
                         dpAmount: dpAmount,
@@ -745,6 +800,12 @@
                     <div class="receipt-row">
                         <span>Lengan Panjang (${order.qtyLong}x @${formatRp(order.priceLong)})</span>
                         <span>${formatRp(order.qtyLong * order.priceLong)}</span>
+                    </div>`;
+            }
+            if (order.sizeDetails) {
+                itemsHtml += `
+                    <div style="font-size:0.8rem; background:#f5f5f5; padding:6px; border-radius:4px; margin: 6px 0;">
+                        <strong>Catatan Size:</strong><br>${order.sizeDetails}
                     </div>`;
             }
             if (order.chargeSize > 0) {
@@ -811,6 +872,7 @@
             });
             saveData();
             renderOrders();
+            renderSizeMonitor();
         }
 
         function deleteOrder(id) {
@@ -822,6 +884,7 @@
                 orders = orders.filter(o => o.id !== id);
                 saveData();
                 renderOrders();
+                renderSizeMonitor();
             }
         }
 
@@ -851,8 +914,10 @@
             tbody.innerHTML = '';
 
             const isDeleteAllowed = ADMIN_USERS.includes(currentUser);
+            let totalPcs = 0;
 
             orders.forEach(order => {
+                totalPcs += (order.qtyShort + order.qtyLong);
                 const badgeClass = order.status === 'Selesai' ? 'badge-done' : 'badge-pending';
                 
                 let details = '';
@@ -860,7 +925,8 @@
                 if(order.qtyLong > 0) details += `Panjang: ${order.qtyLong}x @${formatRp(order.priceLong)}<br>`;
                 if(order.chargeSize > 0) details += `Cas Size: ${formatRp(order.chargeSize)}<br>`;
 
-                // Tombol Hapus hanya muncul jika login sebagai admin1, admin2, atau admin3
+                const sizeHtml = order.sizeDetails ? `<div class="size-box"><strong>Size:</strong> ${order.sizeDetails}</div>` : '';
+
                 const deleteBtnHtml = isDeleteAllowed ? 
                     `<button class="action-btn" onclick="deleteOrder(${order.id})"><i class="fa-solid fa-trash"></i></button>` : 
                     `<span style="color:var(--text-muted); font-size:0.75rem;">No Access</span>`;
@@ -875,7 +941,10 @@
                                 <span style="color:var(--accent-gold)">Deadln: ${order.dateDeadline}</span>
                             </div>
                         </td>
-                        <td><div class="detail-text">${details || '-'}</div></td>
+                        <td>
+                            <div class="detail-text">${details || '-'}</div>
+                            ${sizeHtml}
+                        </td>
                         <td>
                             <div class="detail-text">
                                 Total: <strong>${formatRp(order.totalAmount)}</strong><br>
@@ -885,6 +954,30 @@
                         <td style="color: var(--danger); font-weight:600;">${formatRp(order.remainingAmount)}</td>
                         <td><span class="badge ${badgeClass}" onclick="toggleStatus(${order.id})">${order.status}</span></td>
                         <td>${deleteBtnHtml}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('total-pcs').innerText = totalPcs + ' Pcs';
+        }
+
+        function renderSizeMonitor() {
+            const tbody = document.getElementById('size-monitor-table-body');
+            tbody.innerHTML = '';
+
+            orders.forEach(order => {
+                const totalKaos = order.qtyShort + order.qtyLong;
+                const badgeClass = order.status === 'Selesai' ? 'badge-done' : 'badge-pending';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td><img src="${order.imgBase64}" class="img-preview" onclick="window.open('${order.imgBase64}')"></td>
+                        <td><strong>${order.name}</strong></td>
+                        <td>${order.qtyShort} Pcs</td>
+                        <td>${order.qtyLong} Pcs</td>
+                        <td><strong style="color:var(--info-blue)">${totalKaos} Pcs</strong></td>
+                        <td><div class="size-box">${order.sizeDetails || 'Tidak ada catatan ukuran'}</div></td>
+                        <td><span class="badge ${badgeClass}">${order.status}</span></td>
                     </tr>
                 `;
             });
@@ -928,6 +1021,7 @@
 
         function renderAll() {
             renderOrders();
+            renderSizeMonitor();
             renderFinances();
         }
     </script>
