@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hans - App Keuangan & Order</title>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- HALAMAN LOGIN -->
+    <div id="login-section">
+        <div class="logo-wrapper">
+            <img src="assets/hans.jpg" alt="Hans Logo" class="brand-logo">
+        </div>
+        <h2>Hans Screen Printing</h2>
+        <p>Sistem Manajemen Order & Keuangan</p>
+        <form id="login-form">
+            <div class="input-group">
+                <label><i class="fa-solid fa-user"></i> Username</label>
+                <input type="text" id="username" placeholder="Masukkan admin" required>
+            </div>
+            <div class="input-group">
+                <label><i class="fa-solid fa-lock"></i> Password</label>
+                <input type="password" id="password" placeholder="Masukkan 123" required>
+            </div>
+            <button type="submit" class="btn"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+        </form>
+    </div>
+
+    <!-- HALAMAN DASHBOARD -->
+    <div id="dashboard-section">
+        <header>
+            <div class="header-brand">
+                <img src="assets/hans.jpg" alt="Hans Logo" class="header-logo">
+                <h1>Hans Management System</h1>
+            </div>
+            <button class="btn btn-logout" onclick="logout()"><i class="fa-solid fa-power-off"></i> Keluar</button>
+        </header>
+
+        <!-- Ringkasan Keuangan -->
+        <div class="summary-cards">
+            <div class="card income">
+                <h3>Total Pemasukan Harian</h3>
+                <div class="amount" id="total-income">Rp 0</div>
+            </div>
+            <div class="card expense">
+                <h3>Total Pengeluaran Harian</h3>
+                <div class="amount" id="total-expense">Rp 0</div>
+            </div>
+            <div class="card balance">
+                <h3>Sisa Saldo Kas</h3>
+                <div class="amount" id="total-balance">Rp 0</div>
+            </div>
+        </div>
+
+        <!-- Tab Navigasi -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('orders-tab', this)"><i class="fa-solid fa-users"></i> Customer & Order</button>
+            <button class="tab-btn" onclick="switchTab('finance-tab', this)"><i class="fa-solid fa-calendar-day"></i> Keuangan Harian</button>
+        </div>
+
+        <!-- TAB 1: CUSTOMER & ORDER -->
+        <div id="orders-tab" class="tab-content active">
+            <div class="main-grid">
+                <!-- Form Input Order -->
+                <div class="panel">
+                    <h2><i class="fa-solid fa-cart-plus"></i> Form Order Customer</h2>
+                    <form id="order-form">
+                        <div class="input-group">
+                            <label>Nama Customer</label>
+                            <input type="text" id="cust-name" placeholder="Nama Pelanggan" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Tanggal Masuk</label>
+                            <input type="date" id="date-in" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Tanggal Deadline</label>
+                            <input type="date" id="date-deadline" required>
+                        </div>
+                        <div class="input-group">
+                            <label>DP Order (Rp)</label>
+                            <input type="number" id="dp-amount" placeholder="0" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Upload Desain / Gambar</label>
+                            <input type="file" id="cust-img" accept="image/*" required>
+                        </div>
+                        <button type="submit" class="btn"><i class="fa-solid fa-plus"></i> Simpan Order</button>
+                    </form>
+                </div>
+
+                <!-- Tabel Order Customer -->
+                <div class="panel">
+                    <h2><i class="fa-solid fa-list"></i> Daftar Order Masuk</h2>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Desain</th>
+                                    <th>Nama Customer</th>
+                                    <th>Tgl Masuk</th>
+                                    <th>Deadline</th>
+                                    <th>DP Order</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="order-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: KEUANGAN HARIAN -->
+        <div id="finance-tab" class="tab-content">
+            <div class="main-grid">
+                <!-- Form Input Keuangan -->
+                <div class="panel">
+                    <h2><i class="fa-solid fa-money-bill-wave"></i> Input Keuangan Harian</h2>
+                    <form id="finance-form">
+                        <div class="input-group">
+                            <label>Tanggal</label>
+                            <input type="date" id="finance-date" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Jenis Transaksi</label>
+                            <select id="finance-type">
+                                <option value="income">Pemasukan (+)</option>
+                                <option value="expense">Pengeluaran (-)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Keterangan</label>
+                            <input type="text" id="finance-desc" placeholder="Contoh: Cetak Kaos / Beli Tinta" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Jumlah / Nominal (Rp)</label>
+                            <input type="number" id="finance-amount" placeholder="0" required>
+                        </div>
+                        <button type="submit" class="btn"><i class="fa-solid fa-floppy-disk"></i> Catat Transaksi</button>
+                    </form>
+                </div>
+
+                <!-- Tabel Keuangan Harian -->
+                <div class="panel">
+                    <h2><i class="fa-solid fa-receipt"></i> Laporan Keuangan Harian</h2>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <th>Keterangan</th>
+                                    <th>Jenis</th>
+                                    <th>Jumlah (Rp)</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="finance-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
