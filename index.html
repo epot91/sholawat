@@ -143,6 +143,13 @@
             transform: translateY(-2px);
         }
 
+        .btn-cancel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
         /* DASHBOARD SECTION */
         #dashboard-section {
             display: none;
@@ -315,18 +322,37 @@
         .badge-pending { background: rgba(255, 170, 0, 0.2); color: var(--accent-gold); }
         .badge-done { background: rgba(0, 230, 118, 0.2); color: var(--success); }
 
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
         .action-btn {
             background: none;
             border: none;
-            color: var(--danger);
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            padding: 4px;
+            border-radius: 4px;
         }
+
+        .action-btn.edit { color: var(--info-blue); }
+        .action-btn.delete { color: var(--danger); }
 
         .detail-text {
             font-size: 0.78rem;
             color: var(--text-muted);
             line-height: 1.4;
+        }
+
+        .size-box {
+            background: var(--bg-card);
+            border-left: 3px solid var(--info-blue);
+            padding: 0.4rem 0.6rem;
+            font-size: 0.75rem;
+            margin-top: 0.4rem;
+            border-radius: 0 4px 4px 0;
+            color: #fff;
         }
 
         .calc-preview-box {
@@ -407,7 +433,7 @@
         <form id="login-form">
             <div class="input-group">
                 <label><i class="fa-solid fa-user"></i> Username</label>
-                <input type="text" id="username" placeholder="admin1 / admin2 / admin3 / staff" required autocomplete="off">
+                <input type="text" id="username" placeholder="Masukkan username" required autocomplete="off">
             </div>
             <div class="input-group">
                 <label><i class="fa-solid fa-lock"></i> Password</label>
@@ -425,7 +451,7 @@
                 <h1>Hans Management System</h1>
             </div>
             <div>
-                <span class="user-badge" id="logged-user-label"><i class="fa-solid fa-user-shield"></i> User</span>
+                <span class="user-badge" id="logged-user-label"><i class="fa-solid fa-user"></i> User</span>
                 <button class="btn btn-logout" onclick="logout()"><i class="fa-solid fa-power-off"></i> Keluar</button>
             </div>
         </header>
@@ -459,8 +485,11 @@
         <div id="orders-tab" class="tab-content active">
             <div class="main-grid">
                 <div class="panel">
-                    <h2><i class="fa-solid fa-cart-plus"></i> Form Order Customer</h2>
+                    <h2 id="form-order-title"><i class="fa-solid fa-cart-plus"></i> Form Order Customer</h2>
                     <form id="order-form">
+                        <!-- ID Tersembunyi untuk Mode Edit -->
+                        <input type="hidden" id="edit-order-id" value="">
+
                         <div class="input-group">
                             <label>Jenis Layanan / Order</label>
                             <select id="service-type" onchange="toggleServiceType()">
@@ -539,7 +568,7 @@
                                 <input type="text" id="digital-title" placeholder="Contoh: Banner Spanduk Toko / Stiker Custom">
                             </div>
 
-                            <!-- Input Ukuran Meter (Panjang x Lebar) -->
+                            <!-- Input Ukuran Meter -->
                             <div id="group-meter" class="row-group">
                                 <div class="input-group">
                                     <label>Panjang (m)</label>
@@ -577,11 +606,11 @@
                             </div>
                         </div>
 
-                        <!-- KOLOM CATATAN DETAIL / FINISHING (UNTUK SEMUA ORDER) -->
+                        <!-- FINISHING / CATATAN -->
                         <div class="section-title"><i class="fa-solid fa-note-sticky"></i> Catatan & Finishing</div>
                         <div class="input-group">
                             <label>Catatan Tambahan / Finishing Order</label>
-                            <textarea id="order-notes" placeholder="Contoh: Banner tambah mata ayam 4 sudut / Stiker laminasi doff & potong pola / Sablon posisi dada kiri"></textarea>
+                            <textarea id="order-notes" placeholder="Contoh: Banner tambah mata ayam 4 sudut / Stiker laminasi doff / Sablon dada kiri"></textarea>
                         </div>
 
                         <div class="section-title"><i class="fa-solid fa-wallet"></i> Pembayaran</div>
@@ -591,10 +620,12 @@
                             <input type="number" id="dp-amount" placeholder="0" value="0">
                         </div>
                         <div class="input-group">
-                            <label>Upload Desain / Gambar</label>
-                            <input type="file" id="cust-img" accept="image/*" required>
+                            <label id="lbl-cust-img">Upload Desain / Gambar</label>
+                            <input type="file" id="cust-img" accept="image/*">
                         </div>
-                        <button type="submit" class="btn"><i class="fa-solid fa-plus"></i> Simpan Order & Cetak Nota</button>
+
+                        <button type="submit" id="btn-submit-order" class="btn"><i class="fa-solid fa-plus"></i> Simpan Order & Cetak Nota</button>
+                        <button type="button" id="btn-cancel-edit" class="btn btn-cancel" style="display:none;" onclick="resetOrderForm()"><i class="fa-solid fa-xmark"></i> Batal Edit</button>
                     </form>
                 </div>
 
@@ -611,7 +642,7 @@
                                     <th>Total & DP</th>
                                     <th>Sisa Tagihan</th>
                                     <th>Status</th>
-                                    <th id="action-header">Aksi</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="order-table-body"></tbody>
@@ -694,7 +725,7 @@
 
     </div>
 
-    <!-- MODAL RINCIAN / NOTA STRUCT -->
+    <!-- MODAL STRUCT NOTA -->
     <div id="receipt-modal" class="modal">
         <div class="receipt-card">
             <div class="receipt-header">
@@ -707,9 +738,6 @@
     </div>
 
     <script>
-        // DAFTAR 3 ADMIN YANG BERHAK MENGHAPUS DATA
-        const ADMIN_USERS = ['admin1', 'admin2', 'admin3'];
-
         // TARIF STANDAR PRINT DIGITAL
         const HARGA_BANNER_METER = 25000;
         const HARGA_STIKER_A3 = 12000;
@@ -734,7 +762,6 @@
             
             toggleServiceType();
 
-            // AUTO LOGIN JIKA SUDAH PERNAH LOGIN SEBELUMNYA
             if (currentUser) {
                 showDashboard(currentUser);
             }
@@ -744,10 +771,9 @@
                 loginForm.onsubmit = function(e) {
                     e.preventDefault();
                     
-                    const user = document.getElementById('username').value.trim().toLowerCase();
+                    const user = document.getElementById('username').value.trim();
                     const pass = document.getElementById('password').value.trim();
 
-                    // VALIDASI USER: Password standar 123
                     if (pass === '123') {
                         localStorage.setItem('hans_logged_user', user);
                         showDashboard(user);
@@ -765,9 +791,7 @@
             document.getElementById('dashboard-section').style.display = 'block';
             document.body.style.alignItems = 'flex-start';
             
-            const isDeleteAllowed = ADMIN_USERS.includes(currentUser);
-            document.getElementById('logged-user-label').innerHTML = `<i class="fa-solid fa-user"></i> ${currentUser} ${isDeleteAllowed ? '(Admin)' : '(Staff)'}`;
-            
+            document.getElementById('logged-user-label').innerHTML = `<i class="fa-solid fa-user"></i> ${currentUser}`;
             renderAll();
         }
 
@@ -792,7 +816,7 @@
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(amount || 0);
         }
 
-        /* FUNGSI INTERAKTIF FORM BANNER & STIKER */
+        /* FORM KALKULATOR DIGITAL */
         function toggleServiceType() {
             const service = document.getElementById('service-type').value;
             const secKaos = document.getElementById('section-kaos');
@@ -862,10 +886,11 @@
             return { total, calcText };
         }
 
-        /* SIMPAN ORDER */
+        /* SIMPAN & EDIT ORDER */
         document.getElementById('order-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
+            const editId = document.getElementById('edit-order-id').value;
             const serviceType = document.getElementById('service-type').value;
             const name = document.getElementById('cust-name').value;
             const dateIn = document.getElementById('date-in').value;
@@ -919,9 +944,29 @@
 
             const remainingAmount = totalAmount - dpAmount;
 
-            if (imgFile) {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
+            const processSave = (imgBase64) => {
+                if (editId) {
+                    // MENGEDIT ORDER LAMA
+                    orders = orders.map(o => {
+                        if (o.id == editId) {
+                            return {
+                                ...o,
+                                name,
+                                dateIn,
+                                dateDeadline,
+                                notes,
+                                totalAmount,
+                                dpAmount,
+                                remainingAmount,
+                                imgBase64: imgBase64 || o.imgBase64,
+                                ...orderDetails
+                            };
+                        }
+                        return o;
+                    });
+                    alert('Order berhasil diperbarui!');
+                } else {
+                    // MEMBUAT ORDER BARU
                     const newOrder = {
                         id: Date.now(),
                         name: name,
@@ -931,7 +976,7 @@
                         totalAmount: totalAmount,
                         dpAmount: dpAmount,
                         remainingAmount: remainingAmount,
-                        imgBase64: evt.target.result,
+                        imgBase64: imgBase64 || 'https://via.placeholder.com/45/ff3333/ffffff?text=NO+IMG',
                         status: 'Proses',
                         ...orderDetails
                     };
@@ -947,20 +992,110 @@
                             amount: dpAmount
                         });
                     }
-
-                    saveData();
-                    renderAll();
                     showReceipt(newOrder);
+                }
 
-                    document.getElementById('order-form').reset();
-                    document.getElementById('date-in').value = new Date().toISOString().split('T')[0];
-                    toggleServiceType();
+                saveData();
+                renderAll();
+                resetOrderForm();
+            };
+
+            if (imgFile) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    processSave(evt.target.result);
                 };
                 reader.readAsDataURL(imgFile);
+            } else {
+                if (!editId) {
+                    alert('Harap upload gambar/desain order!');
+                    return;
+                }
+                processSave(null);
             }
         });
 
-        /* NOTA / STRUCT RINCIAN PEMBAYARAN */
+        /* EDIT ORDER */
+        function editOrder(id) {
+            const o = orders.find(item => item.id === id);
+            if (!o) return;
+
+            document.getElementById('edit-order-id').value = o.id;
+            document.getElementById('form-order-title').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit Order (${o.name})`;
+            document.getElementById('btn-submit-order').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan Order`;
+            document.getElementById('btn-cancel-edit').style.display = 'block';
+
+            document.getElementById('service-type').value = o.serviceType;
+            toggleServiceType();
+
+            document.getElementById('cust-name').value = o.name;
+            document.getElementById('date-in').value = o.dateIn;
+            document.getElementById('date-deadline').value = o.dateDeadline;
+            document.getElementById('order-notes').value = o.notes || '';
+            document.getElementById('dp-amount').value = o.dpAmount || 0;
+
+            if (o.serviceType === 'kaos') {
+                document.getElementById('qty-short').value = o.qtyShort || 0;
+                document.getElementById('price-short').value = o.priceShort || 0;
+                document.getElementById('qty-long').value = o.qtyLong || 0;
+                document.getElementById('price-long').value = o.priceLong || 0;
+                document.getElementById('size-details').value = o.sizeDetails || '';
+                document.getElementById('charge-size').value = o.chargeSize || 0;
+            } else {
+                document.getElementById('digital-product').value = o.digitalProduct;
+                toggleDigitalType();
+                document.getElementById('digital-title').value = o.digitalTitle || '';
+                document.getElementById('digital-length').value = o.digitalLength || 1;
+                document.getElementById('digital-width').value = o.digitalWidth || 1;
+                document.getElementById('digital-qty').value = o.digitalQty || 1;
+                document.getElementById('digital-a3-qty').value = o.digitalA3Qty || 1;
+                document.getElementById('digital-unit-price').value = o.digitalPrice || 0;
+                calcDigitalPrice();
+            }
+
+            // Scroll halus ke form
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetOrderForm() {
+            document.getElementById('order-form').reset();
+            document.getElementById('edit-order-id').value = '';
+            document.getElementById('form-order-title').innerHTML = `<i class="fa-solid fa-cart-plus"></i> Form Order Customer`;
+            document.getElementById('btn-submit-order').innerHTML = `<i class="fa-solid fa-plus"></i> Simpan Order & Cetak Nota`;
+            document.getElementById('btn-cancel-edit').style.display = 'none';
+            document.getElementById('date-in').value = new Date().toISOString().split('T')[0];
+            toggleServiceType();
+        }
+
+        /* HAPUS DATA (DAPAT DIGUNAKAN) */
+        function deleteOrder(id) {
+            if (confirm('Yakin ingin menghapus data order ini?')) {
+                orders = orders.filter(o => o.id !== id);
+                saveData();
+                renderAll();
+            }
+        }
+
+        function deleteFinance(id) {
+            if (confirm('Yakin ingin menghapus data transaksi keuangan ini?')) {
+                finances = finances.filter(f => f.id !== id);
+                saveData();
+                renderAll();
+            }
+        }
+
+        function toggleStatus(id) {
+            orders = orders.map(o => {
+                if (o.id === id) {
+                    o.status = o.status === 'Proses' ? 'Selesai' : 'Proses';
+                }
+                return o;
+            });
+            saveData();
+            renderAll();
+        }
+
+        /* STRUCT NOTA */
         function showReceipt(order) {
             const container = document.getElementById('receipt-details');
             let itemsHtml = '';
@@ -1033,7 +1168,7 @@
             document.getElementById('receipt-modal').style.display = 'none';
         }
 
-        /* FINANCES SUBMIT */
+        /* FINANCE FORM */
         document.getElementById('finance-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -1057,45 +1192,10 @@
             document.getElementById('finance-date').value = new Date().toISOString().split('T')[0];
         });
 
-        /* DATA STORAGE & RENDERING */
+        /* RENDER TABEL & SUMMARY */
         function saveData() {
             localStorage.setItem('hans_orders', JSON.stringify(orders));
             localStorage.setItem('hans_finances', JSON.stringify(finances));
-        }
-
-        function toggleStatus(id) {
-            orders = orders.map(o => {
-                if (o.id === id) {
-                    o.status = o.status === 'Proses' ? 'Selesai' : 'Proses';
-                }
-                return o;
-            });
-            saveData();
-            renderAll();
-        }
-
-        function deleteOrder(id) {
-            if (!ADMIN_USERS.includes(currentUser)) {
-                alert('Akses Ditolak: Hanya Admin (admin1, admin2, admin3) yang dapat menghapus data!');
-                return;
-            }
-            if (confirm('Yakin ingin menghapus order ini?')) {
-                orders = orders.filter(o => o.id !== id);
-                saveData();
-                renderAll();
-            }
-        }
-
-        function deleteFinance(id) {
-            if (!ADMIN_USERS.includes(currentUser)) {
-                alert('Akses Ditolak: Hanya Admin (admin1, admin2, admin3) yang dapat menghapus data!');
-                return;
-            }
-            if (confirm('Yakin ingin menghapus transaksi ini?')) {
-                finances = finances.filter(f => f.id !== id);
-                saveData();
-                renderAll();
-            }
         }
 
         function renderAll() {
@@ -1107,7 +1207,6 @@
 
         function renderSummaryCards() {
             const today = new Date().toISOString().split('T')[0];
-            
             let inc = 0;
             let exp = 0;
             let totalPcs = 0;
@@ -1133,7 +1232,6 @@
 
         function renderOrdersTable() {
             const tbody = document.getElementById('order-table-body');
-            const isDeleteAllowed = ADMIN_USERS.includes(currentUser);
             tbody.innerHTML = '';
 
             orders.slice().reverse().forEach(o => {
@@ -1166,7 +1264,10 @@
                         </span>
                     </td>
                     <td>
-                        ${isDeleteAllowed ? `<button class="action-btn" onclick="deleteOrder(${o.id})"><i class="fa-solid fa-trash"></i></button>` : '-'}
+                        <div class="action-btns">
+                            <button class="action-btn edit" onclick="editOrder(${o.id})" title="Edit Order"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="action-btn delete" onclick="deleteOrder(${o.id})" title="Hapus Order"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1210,7 +1311,6 @@
 
         function renderFinancesTable() {
             const tbody = document.getElementById('finance-table-body');
-            const isDeleteAllowed = ADMIN_USERS.includes(currentUser);
             tbody.innerHTML = '';
 
             finances.slice().reverse().forEach(f => {
@@ -1225,7 +1325,7 @@
                         ${isInc ? '+' : '-'} ${formatRp(f.amount)}
                     </td>
                     <td>
-                        ${isDeleteAllowed ? `<button class="action-btn" onclick="deleteFinance(${f.id})"><i class="fa-solid fa-trash"></i></button>` : '-'}
+                        <button class="action-btn delete" onclick="deleteFinance(${f.id})" title="Hapus"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
