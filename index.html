@@ -38,16 +38,43 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* KEYFRAME ANIMATIONS */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px rgba(255, 51, 51, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(255, 51, 51, 0.8); }
+            100% { box-shadow: 0 0 10px rgba(255, 51, 51, 0.4); }
+        }
+
+        @keyframes modalZoom {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.4s ease-out forwards;
         }
 
         /* LOGO STYLES */
         .brand-logo {
-            width: 90px;
-            height: 90px;
+            width: 95px;
+            height: 95px;
             border-radius: 50%;
             object-fit: cover;
-            box-shadow: 0 0 15px rgba(255, 51, 51, 0.6);
+            animation: pulseGlow 3s infinite ease-in-out;
             margin-bottom: 1rem;
+            transition: transform 0.3s;
+        }
+
+        .brand-logo:hover {
+            transform: scale(1.05) rotate(3deg);
         }
 
         .header-logo {
@@ -56,6 +83,7 @@
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid var(--accent-red);
+            box-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
         }
 
         .header-brand {
@@ -72,8 +100,9 @@
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 20px rgba(255, 51, 51, 0.2);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(255, 51, 51, 0.25);
             text-align: center;
+            animation: fadeIn 0.5s ease-out;
         }
 
         #login-section h2 {
@@ -108,7 +137,7 @@
             border-radius: 8px;
             color: #fff;
             outline: none;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .input-group textarea {
@@ -118,7 +147,8 @@
 
         .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
             border-color: var(--accent-red);
-            box-shadow: 0 0 8px rgba(255, 51, 51, 0.4);
+            box-shadow: 0 0 12px rgba(255, 51, 51, 0.4);
+            transform: translateY(-1px);
         }
 
         .row-group {
@@ -130,18 +160,24 @@
         .btn {
             width: 100%;
             padding: 0.8rem;
-            background: linear-gradient(45deg, var(--accent-red), var(--accent-gold));
+            background: linear-gradient(135deg, var(--accent-red), var(--accent-gold));
             border: none;
             border-radius: 8px;
             color: #fff;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 51, 51, 0.3);
         }
 
         .btn:hover {
-            opacity: 0.9;
+            opacity: 0.95;
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 51, 51, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
         }
 
         .btn-cancel {
@@ -149,6 +185,13 @@
             border: 1px solid var(--border-color);
             color: var(--text-muted);
             margin-top: 0.5rem;
+            box-shadow: none;
+        }
+
+        .btn-cancel:hover {
+            background: var(--border-color);
+            color: #fff;
+            box-shadow: none;
         }
 
         /* DASHBOARD SECTION */
@@ -158,6 +201,7 @@
             max-width: 1350px;
             padding: 2rem;
             min-height: 100vh;
+            animation: fadeIn 0.5s ease-out;
         }
 
         header {
@@ -172,22 +216,25 @@
         header h1 {
             font-size: 1.5rem;
             color: #fff;
+            letter-spacing: 0.5px;
         }
 
         .user-badge {
             font-size: 0.8rem;
             background: var(--bg-card);
-            padding: 0.3rem 0.8rem;
+            padding: 0.4rem 0.9rem;
             border-radius: 20px;
             border: 1px solid var(--border-color);
             color: var(--accent-gold);
             margin-right: 1rem;
+            box-shadow: 0 0 10px rgba(255, 170, 0, 0.2);
         }
 
         .btn-logout {
             width: auto;
             padding: 0.5rem 1.2rem;
             background: var(--danger);
+            box-shadow: 0 4px 10px rgba(255, 77, 77, 0.3);
         }
 
         .summary-cards {
@@ -201,7 +248,16 @@
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             padding: 1.5rem;
-            border-radius: 12px;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
         }
 
         .card h3 {
@@ -215,10 +271,19 @@
             font-weight: 700;
         }
 
+        .card.omset { border-top: 3px solid var(--purple); }
         .card.omset .amount { color: var(--purple); }
+
+        .card.income { border-top: 3px solid var(--success); }
         .card.income .amount { color: var(--success); }
+
+        .card.expense { border-top: 3px solid var(--danger); }
         .card.expense .amount { color: var(--danger); }
+
+        .card.balance { border-top: 3px solid var(--accent-gold); }
         .card.balance .amount { color: var(--accent-gold); }
+
+        .card.quantity { border-top: 3px solid var(--info-blue); }
         .card.quantity .amount { color: var(--info-blue); }
 
         .main-grid {
@@ -234,9 +299,15 @@
         .panel {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: border-color 0.3s;
+        }
+
+        .panel:hover {
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
         .panel h2 {
@@ -270,15 +341,21 @@
             color: var(--text-muted);
             font-size: 0.95rem;
             font-weight: 600;
-            padding: 0.5rem 1.2rem;
+            padding: 0.6rem 1.2rem;
             cursor: pointer;
-            border-radius: 6px;
-            transition: all 0.3s;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .tab-btn.active {
             background: var(--bg-card);
             color: var(--accent-red);
+            box-shadow: 0 0 10px rgba(255, 51, 51, 0.2);
         }
 
         .table-responsive {
@@ -293,9 +370,17 @@
         }
 
         th, td {
-            padding: 0.75rem;
+            padding: 0.85rem;
             border-bottom: 1px solid var(--border-color);
             vertical-align: middle;
+        }
+
+        tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
         }
 
         th {
@@ -311,18 +396,29 @@
             border-radius: 6px;
             border: 1px solid var(--border-color);
             cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .img-preview:hover {
+            transform: scale(1.15);
         }
 
         .badge {
-            padding: 0.3rem 0.6rem;
+            padding: 0.35rem 0.7rem;
             border-radius: 20px;
             font-size: 0.75rem;
             font-weight: 600;
             cursor: pointer;
+            transition: transform 0.2s ease;
+            display: inline-block;
         }
 
-        .badge-pending { background: rgba(255, 170, 0, 0.2); color: var(--accent-gold); }
-        .badge-done { background: rgba(0, 230, 118, 0.2); color: var(--success); }
+        .badge:hover {
+            transform: scale(1.05);
+        }
+
+        .badge-pending { background: rgba(255, 170, 0, 0.2); color: var(--accent-gold); border: 1px solid rgba(255, 170, 0, 0.4); }
+        .badge-done { background: rgba(0, 230, 118, 0.2); color: var(--success); border: 1px solid rgba(0, 230, 118, 0.4); }
 
         .action-btns {
             display: flex;
@@ -334,8 +430,14 @@
             border: none;
             cursor: pointer;
             font-size: 0.95rem;
-            padding: 4px;
-            border-radius: 4px;
+            padding: 6px 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--bg-card);
+            transform: scale(1.1);
         }
 
         .action-btn.edit { color: var(--info-blue); }
@@ -357,6 +459,7 @@
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(4px);
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -369,7 +472,8 @@
             max-width: 420px;
             padding: 2rem;
             border-radius: 12px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            animation: modalZoom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .receipt-header {
@@ -404,15 +508,15 @@
         }
 
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
     </style>
 </head>
 <body>
 
-    <!-- HALAMAN LOGIN (Satu Akses Pengguna) -->
+    <!-- HALAMAN LOGIN (Akses Tunggal Single Admin) -->
     <div id="login-section">
         <div class="logo-wrapper">
-            <img src="assets/hans.jpg" alt="Hans Logo" class="brand-logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/90/ff3333/ffffff?text=HANS';">
+            <img src="assets/hans.jpg" alt="Hans Logo" class="brand-logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/95/ff3333/ffffff?text=HANS';">
         </div>
         <h2>Hans Screen Printing</h2>
         <p>Sistem Akses Tunggal & Keuangan</p>
@@ -438,7 +542,7 @@
                 <h1>Hans Management System</h1>
             </div>
             <div>
-                <span class="user-badge" id="logged-user-label"><i class="fa-solid fa-user"></i> Admin</span>
+                <span class="user-badge" id="logged-user-label"><i class="fa-solid fa-user-shield"></i> Admin</span>
                 <button class="btn btn-logout" onclick="logout()"><i class="fa-solid fa-power-off"></i> Keluar</button>
             </div>
         </header>
@@ -450,7 +554,7 @@
                 <div class="amount" id="total-omset">Rp 0</div>
             </div>
             <div class="card income">
-                <h3>Total Kas Masuk</h3>
+                <h3>Total Kas Masuk (Pendapatan)</h3>
                 <div class="amount" id="total-income">Rp 0</div>
             </div>
             <div class="card expense">
@@ -666,8 +770,10 @@
         <div id="finance-tab" class="tab-content">
             <div class="main-grid">
                 <div class="panel">
-                    <h2><i class="fa-solid fa-money-bill-wave"></i> Input Keuangan Harian</h2>
+                    <h2 id="form-finance-title"><i class="fa-solid fa-money-bill-wave"></i> Input Keuangan Harian</h2>
                     <form id="finance-form">
+                        <input type="hidden" id="edit-finance-id" value="">
+                        
                         <div class="input-group">
                             <label>Tanggal</label>
                             <input type="date" id="finance-date" required>
@@ -687,7 +793,8 @@
                             <label>Jumlah / Nominal (Rp)</label>
                             <input type="number" id="finance-amount" placeholder="0" required>
                         </div>
-                        <button type="submit" class="btn"><i class="fa-solid fa-floppy-disk"></i> Catat Transaksi</button>
+                        <button type="submit" id="btn-submit-finance" class="btn"><i class="fa-solid fa-floppy-disk"></i> Catat Transaksi</button>
+                        <button type="button" id="btn-cancel-finance" class="btn btn-cancel" style="display:none;" onclick="resetFinanceForm()"><i class="fa-solid fa-xmark"></i> Batal Edit</button>
                     </form>
                 </div>
 
@@ -768,7 +875,6 @@
                     const user = document.getElementById('username').value.trim();
                     const pass = document.getElementById('password').value.trim();
 
-                    // VALIDASI HANYA 1 AKUN PENGGUNA
                     if (user === SINGLE_USERNAME && pass === SINGLE_PASSWORD) {
                         localStorage.setItem('hans_logged_user', user);
                         showDashboard(user);
@@ -927,10 +1033,27 @@
                 };
 
                 if (editId) {
+                    const oldOrder = orders.find(o => o.id == editId);
                     orders = orders.map(o => o.id == editId ? orderData : o);
+                    
+                    // Update Pemasukan DP Terkait di Keuangan jika nominal DP berubah
+                    if (oldOrder) {
+                        const finIndex = finances.findIndex(f => f.desc === `DP Order: ${oldOrder.custName}` || f.desc === `DP Order: ${custName}`);
+                        if (finIndex !== -1) {
+                            finances[finIndex].amount = dp;
+                            finances[finIndex].desc = `DP Order: ${custName}`;
+                        } else if (dp > 0) {
+                            finances.push({
+                                id: Date.now(),
+                                date: dateIn,
+                                type: 'income',
+                                desc: `DP Order: ${custName}`,
+                                amount: dp
+                            });
+                        }
+                    }
                 } else {
                     orders.push(orderData);
-                    // Masukkan DP secara otomatis ke Keuangan Harian sebagai Pemasukan
                     if(dp > 0) {
                         finances.push({
                             id: Date.now(),
@@ -963,21 +1086,51 @@
             document.getElementById('form-order-title').innerHTML = `<i class="fa-solid fa-cart-plus"></i> Form Order Customer`;
             document.getElementById('btn-submit-order').innerHTML = `<i class="fa-solid fa-plus"></i> Simpan Order & Cetak Nota`;
             document.getElementById('btn-cancel-edit').style.display = 'none';
+            document.getElementById('date-in').value = new Date().toISOString().split('T')[0];
             toggleServiceType();
         }
 
         function handleFinanceSubmit(e) {
             e.preventDefault();
+            const editId = document.getElementById('edit-finance-id').value;
             const date = document.getElementById('finance-date').value;
             const type = document.getElementById('finance-type').value;
             const desc = document.getElementById('finance-desc').value;
             const amount = parseFloat(document.getElementById('finance-amount').value) || 0;
 
-            finances.push({ id: Date.now(), date, type, desc, amount });
+            if (editId) {
+                finances = finances.map(f => f.id == editId ? { id: parseInt(editId), date, type, desc, amount } : f);
+            } else {
+                finances.push({ id: Date.now(), date, type, desc, amount });
+            }
+
             saveData();
             renderAll();
+            resetFinanceForm();
+        }
+
+        function resetFinanceForm() {
             document.getElementById('finance-form').reset();
+            document.getElementById('edit-finance-id').value = '';
+            document.getElementById('form-finance-title').innerHTML = `<i class="fa-solid fa-money-bill-wave"></i> Input Keuangan Harian`;
+            document.getElementById('btn-submit-finance').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Catat Transaksi`;
+            document.getElementById('btn-cancel-finance').style.display = 'none';
             document.getElementById('finance-date').value = new Date().toISOString().split('T')[0];
+        }
+
+        function editFinance(id) {
+            const item = finances.find(f => f.id === id);
+            if (!item) return;
+
+            document.getElementById('edit-finance-id').value = item.id;
+            document.getElementById('finance-date').value = item.date;
+            document.getElementById('finance-type').value = item.type;
+            document.getElementById('finance-desc').value = item.desc;
+            document.getElementById('finance-amount').value = item.amount;
+
+            document.getElementById('form-finance-title').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit Transaksi Keuangan`;
+            document.getElementById('btn-submit-finance').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Update Transaksi`;
+            document.getElementById('btn-cancel-finance').style.display = 'block';
         }
 
         function toggleStatus(id) {
@@ -1047,18 +1200,18 @@
         }
 
         function renderAll() {
-            // Hitung Total Omset Keseluruhan (Penjumlahan Semua Order)
+            // Hitung Omset Akumulasi
             const grandTotalOmset = orders.reduce((sum, o) => sum + (o.totalOmset || 0), 0);
             
-            // Hitung Keuangan Harian
+            // Hitung Pendapatan Kas Masuk & Keluar
             const totalIncome = finances.filter(f => f.type === 'income').reduce((sum, f) => sum + f.amount, 0);
             const totalExpense = finances.filter(f => f.type === 'expense').reduce((sum, f) => sum + f.amount, 0);
             const totalBalance = totalIncome - totalExpense;
 
-            // Hitung Total Kaos Diproduksi
+            // Hitung Kaos Diproduksi
             const totalPcs = orders.filter(o => o.serviceType === 'kaos').reduce((sum, o) => sum + (o.details.totalPcs || 0), 0);
 
-            // Update Tampilan Ringkasan Kartu
+            // Update UI Ringkasan
             document.getElementById('total-omset').innerText = formatRp(grandTotalOmset);
             document.getElementById('total-income').innerText = formatRp(totalIncome);
             document.getElementById('total-expense').innerText = formatRp(totalExpense);
@@ -1079,12 +1232,12 @@
                 let rincian = '';
 
                 if (o.serviceType === 'kaos') {
-                    rincian = `Sablon Kaos (${o.details.totalPcs} Pcs)<br><small class="detail-text">${o.notes || '-'}</small>`;
+                    rincian = `Sablon Kaos (${o.details.totalPcs} Pcs)<br><small class="detail-text" style="color:var(--text-muted);">${o.notes || '-'}</small>`;
                 } else {
-                    rincian = `${o.details.title || 'Cetak Digital'}<br><small class="detail-text">${o.notes || '-'}</small>`;
+                    rincian = `${o.details.title || 'Cetak Digital'}<br><small class="detail-text" style="color:var(--text-muted);">${o.notes || '-'}</small>`;
                 }
 
-                const imgHtml = o.img ? `<img src="${o.img}" class="img-preview" onclick="window.open('${o.img}')">` : '<i class="fa-solid fa-image text-muted"></i>';
+                const imgHtml = o.img ? `<img src="${o.img}" class="img-preview" onclick="window.open('${o.img}')">` : '<i class="fa-solid fa-image" style="color:var(--text-muted);"></i>';
                 const statusBadge = `<span class="badge ${o.status === 'Selesai' ? 'badge-done' : 'badge-pending'}" onclick="toggleStatus(${o.id})">${o.status}</span>`;
 
                 tbody.innerHTML += `
@@ -1099,7 +1252,7 @@
                         <td>
                             <div class="action-btns">
                                 <button class="action-btn print" onclick="showReceiptById(${o.id})" title="Cetak Nota"><i class="fa-solid fa-print"></i></button>
-                                <button class="action-btn edit" onclick="editOrder(${o.id})" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                                <button class="action-btn edit" onclick="editOrder(${o.id})" title="Edit Order"><i class="fa-solid fa-pen"></i></button>
                                 <button class="action-btn delete" onclick="deleteOrder(${o.id})" title="Hapus"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </td>
@@ -1148,7 +1301,10 @@
                         <td><span class="badge ${isIncome ? 'badge-done' : 'badge-pending'}">${isIncome ? 'Pemasukan' : 'Pengeluaran'}</span></td>
                         <td style="color: ${isIncome ? 'var(--success)' : 'var(--danger)'}"><strong>${isIncome ? '+' : '-'} ${formatRp(f.amount)}</strong></td>
                         <td>
-                            <button class="action-btn delete" onclick="deleteFinance(${f.id})"><i class="fa-solid fa-trash"></i></button>
+                            <div class="action-btns">
+                                <button class="action-btn edit" onclick="editFinance(${f.id})" title="Edit Transaksi"><i class="fa-solid fa-pen"></i></button>
+                                <button class="action-btn delete" onclick="deleteFinance(${f.id})" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                            </div>
                         </td>
                     </tr>
                 `;
