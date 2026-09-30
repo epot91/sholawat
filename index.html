@@ -41,7 +41,7 @@
             overflow-x: hidden;
         }
 
-        /* KEYFRAME ANIMATIONS */
+        /* ANIMASI */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
@@ -58,11 +58,7 @@
             to { transform: scale(1); opacity: 1; }
         }
 
-        .animate-fade {
-            animation: fadeIn 0.4s ease-out forwards;
-        }
-
-        /* LOGO STYLES */
+        /* LOGO & BRANDING */
         .brand-logo {
             width: 95px;
             height: 95px;
@@ -191,7 +187,22 @@
         .btn-cancel:hover {
             background: var(--border-color);
             color: #fff;
-            box-shadow: none;
+        }
+
+        .btn-reset {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 0.5rem 0.9rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-reset:hover {
+            border-color: var(--danger);
+            color: var(--danger);
         }
 
         /* DASHBOARD SECTION */
@@ -226,7 +237,7 @@
             border-radius: 20px;
             border: 1px solid var(--border-color);
             color: var(--accent-gold);
-            margin-right: 1rem;
+            margin-right: 0.5rem;
             box-shadow: 0 0 10px rgba(255, 170, 0, 0.2);
         }
 
@@ -453,7 +464,7 @@
             font-size: 0.85rem;
         }
 
-        /* MODAL / NOTA STRUCT STYLES */
+        /* MODAL / STRUCT NOTA */
         .modal {
             display: none;
             position: fixed;
@@ -513,7 +524,7 @@
 </head>
 <body>
 
-    <!-- HALAMAN LOGIN (Akses Tunggal Single Admin) -->
+    <!-- HALAMAN LOGIN (Akses Single Admin) -->
     <div id="login-section">
         <div class="logo-wrapper">
             <img src="assets/hans.jpg" alt="Hans Logo" class="brand-logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/95/ff3333/ffffff?text=HANS';">
@@ -541,8 +552,9 @@
                 <img src="assets/hans.jpg" alt="Hans Logo" class="header-logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/45/ff3333/ffffff?text=H';">
                 <h1>Hans Management System</h1>
             </div>
-            <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
                 <span class="user-badge" id="logged-user-label"><i class="fa-solid fa-user-shield"></i> Admin</span>
+                <button class="btn-reset" onclick="clearAllData()"><i class="fa-solid fa-rotate-left"></i> Bersihkan Data</button>
                 <button class="btn btn-logout" onclick="logout()"><i class="fa-solid fa-power-off"></i> Keluar</button>
             </div>
         </header>
@@ -833,11 +845,9 @@
     </div>
 
     <script>
-        // KREDENSIAL HANYA UNTUK 1 ORANG PENGGUNA (AKSES KHUSUS)
         const SINGLE_USERNAME = "admin";
         const SINGLE_PASSWORD = "123";
 
-        // TARIF STANDAR PRINT DIGITAL
         const HARGA_BANNER_METER = 25000;
         const HARGA_STIKER_A3 = 12000;
         const HARGA_STIKER_METER = 65000;
@@ -849,9 +859,9 @@
         try {
             orders = JSON.parse(localStorage.getItem('hans_orders')) || [];
             finances = JSON.parse(localStorage.getItem('hans_finances')) || [];
-            currentUser = localStorage.getItem('hans_logged_user');
         } catch (err) {
-            console.error('LocalStorage error:', err);
+            orders = [];
+            finances = [];
         }
 
         window.onload = function() {
@@ -861,6 +871,7 @@
             
             toggleServiceType();
 
+            currentUser = localStorage.getItem('hans_logged_user');
             if (currentUser === SINGLE_USERNAME) {
                 showDashboard(currentUser);
             } else {
@@ -879,7 +890,7 @@
                         localStorage.setItem('hans_logged_user', user);
                         showDashboard(user);
                     } else {
-                        alert('Akses Ditolak!\nUsername atau Password Salah. Aplikasi ini khusus 1 pengguna saja.');
+                        alert('Akses Ditolak!\nUsername atau Password Salah.');
                     }
                     return false;
                 };
@@ -906,6 +917,16 @@
             document.getElementById('login-section').style.display = 'block';
             document.body.style.alignItems = 'center';
             if(document.getElementById('login-form')) document.getElementById('login-form').reset();
+        }
+
+        function clearAllData() {
+            if(confirm("Apakah Anda ingin menghapus seluruh data/history transaksi percobaan untuk memulai dari awal?")) {
+                orders = [];
+                finances = [];
+                saveData();
+                renderAll();
+                alert("Seluruh data berhasil dibersihkan! Angka kas kembali menjadi Rp 0.");
+            }
         }
 
         function switchTab(tabId, btn) {
@@ -1036,15 +1057,16 @@
                     const oldOrder = orders.find(o => o.id == editId);
                     orders = orders.map(o => o.id == editId ? orderData : o);
                     
-                    // Update Pemasukan DP Terkait di Keuangan jika nominal DP berubah
                     if (oldOrder) {
-                        const finIndex = finances.findIndex(f => f.desc === `DP Order: ${oldOrder.custName}` || f.desc === `DP Order: ${custName}`);
+                        const finIndex = finances.findIndex(f => f.orderId === oldOrder.id || f.desc === `DP Order: ${oldOrder.custName}`);
                         if (finIndex !== -1) {
                             finances[finIndex].amount = dp;
                             finances[finIndex].desc = `DP Order: ${custName}`;
+                            finances[finIndex].date = dateIn;
                         } else if (dp > 0) {
                             finances.push({
                                 id: Date.now(),
+                                orderId: orderData.id,
                                 date: dateIn,
                                 type: 'income',
                                 desc: `DP Order: ${custName}`,
@@ -1057,6 +1079,7 @@
                     if(dp > 0) {
                         finances.push({
                             id: Date.now(),
+                            orderId: orderData.id,
                             date: dateIn,
                             type: 'income',
                             desc: `DP Order: ${custName}`,
@@ -1099,7 +1122,7 @@
             const amount = parseFloat(document.getElementById('finance-amount').value) || 0;
 
             if (editId) {
-                finances = finances.map(f => f.id == editId ? { id: parseInt(editId), date, type, desc, amount } : f);
+                finances = finances.map(f => f.id == editId ? { id: parseInt(editId), date, type, desc, amount, orderId: f.orderId } : f);
             } else {
                 finances.push({ id: Date.now(), date, type, desc, amount });
             }
@@ -1147,6 +1170,7 @@
         function deleteOrder(id) {
             if (confirm('Apakah Anda yakin ingin menghapus order ini?')) {
                 orders = orders.filter(o => o.id !== id);
+                finances = finances.filter(f => f.orderId !== id);
                 saveData();
                 renderAll();
             }
@@ -1200,18 +1224,14 @@
         }
 
         function renderAll() {
-            // Hitung Omset Akumulasi
             const grandTotalOmset = orders.reduce((sum, o) => sum + (o.totalOmset || 0), 0);
             
-            // Hitung Pendapatan Kas Masuk & Keluar
             const totalIncome = finances.filter(f => f.type === 'income').reduce((sum, f) => sum + f.amount, 0);
             const totalExpense = finances.filter(f => f.type === 'expense').reduce((sum, f) => sum + f.amount, 0);
             const totalBalance = totalIncome - totalExpense;
 
-            // Hitung Kaos Diproduksi
             const totalPcs = orders.filter(o => o.serviceType === 'kaos').reduce((sum, o) => sum + (o.details.totalPcs || 0), 0);
 
-            // Update UI Ringkasan
             document.getElementById('total-omset').innerText = formatRp(grandTotalOmset);
             document.getElementById('total-income').innerText = formatRp(totalIncome);
             document.getElementById('total-expense').innerText = formatRp(totalExpense);
@@ -1232,9 +1252,9 @@
                 let rincian = '';
 
                 if (o.serviceType === 'kaos') {
-                    rincian = `Sablon Kaos (${o.details.totalPcs} Pcs)<br><small class="detail-text" style="color:var(--text-muted);">${o.notes || '-'}</small>`;
+                    rincian = `Sablon Kaos (${o.details.totalPcs} Pcs)<br><small style="color:var(--text-muted);">${o.notes || '-'}</small>`;
                 } else {
-                    rincian = `${o.details.title || 'Cetak Digital'}<br><small class="detail-text" style="color:var(--text-muted);">${o.notes || '-'}</small>`;
+                    rincian = `${o.details.title || 'Cetak Digital'}<br><small style="color:var(--text-muted);">${o.notes || '-'}</small>`;
                 }
 
                 const imgHtml = o.img ? `<img src="${o.img}" class="img-preview" onclick="window.open('${o.img}')">` : '<i class="fa-solid fa-image" style="color:var(--text-muted);"></i>';
