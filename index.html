@@ -28,6 +28,7 @@
             --danger: #ff4d4d;
             --success: #00e676;
             --info-blue: #00b0ff;
+            --purple: #b388ff;
         }
 
         body {
@@ -191,7 +192,7 @@
 
         .summary-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
@@ -210,10 +211,11 @@
         }
 
         .card .amount {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 700;
         }
 
+        .card.omset .amount { color: var(--purple); }
         .card.income .amount { color: var(--success); }
         .card.expense .amount { color: var(--danger); }
         .card.balance .amount { color: var(--accent-gold); }
@@ -338,22 +340,7 @@
 
         .action-btn.edit { color: var(--info-blue); }
         .action-btn.delete { color: var(--danger); }
-
-        .detail-text {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            line-height: 1.4;
-        }
-
-        .size-box {
-            background: var(--bg-card);
-            border-left: 3px solid var(--info-blue);
-            padding: 0.4rem 0.6rem;
-            font-size: 0.75rem;
-            margin-top: 0.4rem;
-            border-radius: 0 4px 4px 0;
-            color: #fff;
-        }
+        .action-btn.print { color: var(--accent-gold); }
 
         .calc-preview-box {
             background: var(--bg-card);
@@ -422,24 +409,24 @@
 </head>
 <body>
 
-    <!-- HALAMAN LOGIN -->
+    <!-- HALAMAN LOGIN (Satu Akses Pengguna) -->
     <div id="login-section">
         <div class="logo-wrapper">
             <img src="assets/hans.jpg" alt="Hans Logo" class="brand-logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/90/ff3333/ffffff?text=HANS';">
         </div>
         <h2>Hans Screen Printing</h2>
-        <p>Sistem Manajemen Order & Keuangan</p>
+        <p>Sistem Akses Tunggal & Keuangan</p>
         
         <form id="login-form">
             <div class="input-group">
-                <label><i class="fa-solid fa-user"></i> Username</label>
+                <label><i class="fa-solid fa-user"></i> Username Admin</label>
                 <input type="text" id="username" placeholder="Masukkan username" required autocomplete="off">
             </div>
             <div class="input-group">
                 <label><i class="fa-solid fa-lock"></i> Password</label>
                 <input type="password" id="password" placeholder="Masukkan password" required>
             </div>
-            <button type="submit" id="btn-login-submit" class="btn"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+            <button type="submit" id="btn-login-submit" class="btn"><i class="fa-solid fa-right-to-bracket"></i> Login Admin</button>
         </form>
     </div>
 
@@ -451,18 +438,23 @@
                 <h1>Hans Management System</h1>
             </div>
             <div>
-                <span class="user-badge" id="logged-user-label"><i class="fa-solid fa-user"></i> User</span>
+                <span class="user-badge" id="logged-user-label"><i class="fa-solid fa-user"></i> Admin</span>
                 <button class="btn btn-logout" onclick="logout()"><i class="fa-solid fa-power-off"></i> Keluar</button>
             </div>
         </header>
 
+        <!-- KARTU RINGKASAN OMSET DAN KEUANGAN -->
         <div class="summary-cards">
+            <div class="card omset">
+                <h3>Total Omset Keseluruhan</h3>
+                <div class="amount" id="total-omset">Rp 0</div>
+            </div>
             <div class="card income">
-                <h3>Total Pemasukan Harian</h3>
+                <h3>Total Kas Masuk</h3>
                 <div class="amount" id="total-income">Rp 0</div>
             </div>
             <div class="card expense">
-                <h3>Total Pengeluaran Harian</h3>
+                <h3>Total Pengeluaran</h3>
                 <div class="amount" id="total-expense">Rp 0</div>
             </div>
             <div class="card balance">
@@ -487,7 +479,6 @@
                 <div class="panel">
                     <h2 id="form-order-title"><i class="fa-solid fa-cart-plus"></i> Form Order Customer</h2>
                     <form id="order-form">
-                        <!-- ID Tersembunyi untuk Mode Edit -->
                         <input type="hidden" id="edit-order-id" value="">
 
                         <div class="input-group">
@@ -550,7 +541,7 @@
                             </div>
                         </div>
 
-                        <!-- SECTION FORM CETAK DIGITAL (BANNER & STIKER) -->
+                        <!-- SECTION FORM CETAK DIGITAL -->
                         <div id="section-digital" style="display: none;">
                             <div class="section-title"><i class="fa-solid fa-print"></i> Rincian Banner & Stiker</div>
 
@@ -568,7 +559,6 @@
                                 <input type="text" id="digital-title" placeholder="Contoh: Banner Spanduk Toko / Stiker Custom">
                             </div>
 
-                            <!-- Input Ukuran Meter -->
                             <div id="group-meter" class="row-group">
                                 <div class="input-group">
                                     <label>Panjang (m)</label>
@@ -580,7 +570,6 @@
                                 </div>
                             </div>
 
-                            <!-- Input Lembar A3 -->
                             <div id="group-a3" class="input-group" style="display: none;">
                                 <label>Jumlah Lembar (A3)</label>
                                 <input type="number" id="digital-a3-qty" value="1" min="1" oninput="calcDigitalPrice()">
@@ -606,7 +595,6 @@
                             </div>
                         </div>
 
-                        <!-- FINISHING / CATATAN -->
                         <div class="section-title"><i class="fa-solid fa-note-sticky"></i> Catatan & Finishing</div>
                         <div class="input-group">
                             <label>Catatan Tambahan / Finishing Order</label>
@@ -639,7 +627,7 @@
                                     <th>Nama Customer</th>
                                     <th>Tgl & Deadline</th>
                                     <th>Rincian Order & Catatan</th>
-                                    <th>Total & DP</th>
+                                    <th>Total Omset & DP</th>
                                     <th>Sisa Tagihan</th>
                                     <th>Status</th>
                                     <th>Aksi</th>
@@ -693,7 +681,7 @@
                         </div>
                         <div class="input-group">
                             <label>Keterangan</label>
-                            <input type="text" id="finance-desc" placeholder="Contoh: Cetak Kaos / Cetak Banner / Beli Tinta" required>
+                            <input type="text" id="finance-desc" placeholder="Contoh: Pelunasan Kaos / Beli Tinta / Kas Keluar" required>
                         </div>
                         <div class="input-group">
                             <label>Jumlah / Nominal (Rp)</label>
@@ -738,6 +726,10 @@
     </div>
 
     <script>
+        // KREDENSIAL HANYA UNTUK 1 ORANG PENGGUNA (AKSES KHUSUS)
+        const SINGLE_USERNAME = "admin";
+        const SINGLE_PASSWORD = "123";
+
         // TARIF STANDAR PRINT DIGITAL
         const HARGA_BANNER_METER = 25000;
         const HARGA_STIKER_A3 = 12000;
@@ -762,8 +754,10 @@
             
             toggleServiceType();
 
-            if (currentUser) {
+            if (currentUser === SINGLE_USERNAME) {
                 showDashboard(currentUser);
+            } else {
+                logout();
             }
 
             const loginForm = document.getElementById('login-form');
@@ -774,15 +768,19 @@
                     const user = document.getElementById('username').value.trim();
                     const pass = document.getElementById('password').value.trim();
 
-                    if (pass === '123') {
+                    // VALIDASI HANYA 1 AKUN PENGGUNA
+                    if (user === SINGLE_USERNAME && pass === SINGLE_PASSWORD) {
                         localStorage.setItem('hans_logged_user', user);
                         showDashboard(user);
                     } else {
-                        alert('Password salah!\nGunakan Password: 123');
+                        alert('Akses Ditolak!\nUsername atau Password Salah. Aplikasi ini khusus 1 pengguna saja.');
                     }
                     return false;
                 };
             }
+
+            document.getElementById('order-form').onsubmit = handleOrderSubmit;
+            document.getElementById('finance-form').onsubmit = handleFinanceSubmit;
         };
 
         function showDashboard(username) {
@@ -791,7 +789,7 @@
             document.getElementById('dashboard-section').style.display = 'block';
             document.body.style.alignItems = 'flex-start';
             
-            document.getElementById('logged-user-label').innerHTML = `<i class="fa-solid fa-user"></i> ${currentUser}`;
+            document.getElementById('logged-user-label').innerHTML = `<i class="fa-solid fa-user-shield"></i> ${currentUser}`;
             renderAll();
         }
 
@@ -801,7 +799,7 @@
             document.getElementById('dashboard-section').style.display = 'none';
             document.getElementById('login-section').style.display = 'block';
             document.body.style.alignItems = 'center';
-            document.getElementById('login-form').reset();
+            if(document.getElementById('login-form')) document.getElementById('login-form').reset();
         }
 
         function switchTab(tabId, btn) {
@@ -816,7 +814,6 @@
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(amount || 0);
         }
 
-        /* FORM KALKULATOR DIGITAL */
         function toggleServiceType() {
             const service = document.getElementById('service-type').value;
             const secKaos = document.getElementById('section-kaos');
@@ -860,201 +857,104 @@
 
         function calcDigitalPrice() {
             const product = document.getElementById('digital-product').value;
-            const title = document.getElementById('digital-title').value.trim() || 'Tanpa Nama';
-            const price = parseFloat(document.getElementById('digital-unit-price').value) || 0;
-            
-            let total = 0;
-            let calcText = '';
+            const unitPrice = parseFloat(document.getElementById('digital-unit-price').value) || 0;
+            let subtotal = 0;
+            let detailText = '';
 
             if (product === 'banner' || product === 'stiker_meter') {
                 const len = parseFloat(document.getElementById('digital-length').value) || 0;
                 const wid = parseFloat(document.getElementById('digital-width').value) || 0;
                 const qty = parseInt(document.getElementById('digital-qty').value) || 0;
-                const area = len * wid;
-
-                total = area * price * qty;
-                const label = product === 'banner' ? 'Banner' : 'Stiker Meter';
-                calcText = `${label} "${title}": ${len}m x ${wid}m (${area.toFixed(2)} m²) x ${qty} Pcs @ ${formatRp(price)}`;
+                const totalMeter = len * wid;
+                subtotal = totalMeter * unitPrice * qty;
+                detailText = `${len}m x ${wid}m = ${totalMeter.toFixed(2)} m² x ${qty} Pcs @ ${formatRp(unitPrice)}`;
             } else if (product === 'stiker_a3') {
-                const sheets = parseInt(document.getElementById('digital-a3-qty').value) || 0;
-                total = sheets * price;
-                calcText = `Stiker A3 "${title}": ${sheets} Lembar A3 @ ${formatRp(price)}`;
+                const a3Qty = parseInt(document.getElementById('digital-a3-qty').value) || 0;
+                subtotal = a3Qty * unitPrice;
+                detailText = `${a3Qty} Lembar A3 @ ${formatRp(unitPrice)}`;
             }
 
-            document.getElementById('digital-calc-text').innerText = calcText;
-            document.getElementById('digital-subtotal-text').innerText = total.toLocaleString('id-ID');
-            return { total, calcText };
+            document.getElementById('digital-calc-text').innerText = detailText;
+            document.getElementById('digital-subtotal-text').innerText = subtotal.toLocaleString('id-ID');
+            return subtotal;
         }
 
-        /* SIMPAN & EDIT ORDER */
-        document.getElementById('order-form').addEventListener('submit', function(e) {
+        function handleOrderSubmit(e) {
             e.preventDefault();
             
             const editId = document.getElementById('edit-order-id').value;
             const serviceType = document.getElementById('service-type').value;
-            const name = document.getElementById('cust-name').value;
+            const custName = document.getElementById('cust-name').value;
             const dateIn = document.getElementById('date-in').value;
             const dateDeadline = document.getElementById('date-deadline').value;
-            const notes = document.getElementById('order-notes').value.trim();
-            const dpAmount = parseFloat(document.getElementById('dp-amount').value) || 0;
+            const notes = document.getElementById('order-notes').value;
+            const dp = parseFloat(document.getElementById('dp-amount').value) || 0;
             const imgFile = document.getElementById('cust-img').files[0];
 
-            let totalAmount = 0;
-            let orderDetails = {};
+            let totalOmset = 0;
+            let details = {};
 
             if (serviceType === 'kaos') {
-                const qtyShort = parseInt(document.getElementById('qty-short').value) || 0;
-                const priceShort = parseFloat(document.getElementById('price-short').value) || 0;
-                const qtyLong = parseInt(document.getElementById('qty-long').value) || 0;
-                const priceLong = parseFloat(document.getElementById('price-long').value) || 0;
-                const sizeDetails = document.getElementById('size-details').value.trim();
-                const chargeSize = parseFloat(document.getElementById('charge-size').value) || 0;
+                const qShort = parseInt(document.getElementById('qty-short').value) || 0;
+                const pShort = parseFloat(document.getElementById('price-short').value) || 0;
+                const qLong = parseInt(document.getElementById('qty-long').value) || 0;
+                const pLong = parseFloat(document.getElementById('price-long').value) || 0;
+                const charge = parseFloat(document.getElementById('charge-size').value) || 0;
+                const sizes = document.getElementById('size-details').value;
 
-                totalAmount = (qtyShort * priceShort) + (qtyLong * priceLong) + chargeSize;
-
-                orderDetails = {
-                    serviceType: 'kaos',
-                    qtyShort: qtyShort,
-                    priceShort: priceShort,
-                    qtyLong: qtyLong,
-                    priceLong: priceLong,
-                    sizeDetails: sizeDetails,
-                    chargeSize: chargeSize
-                };
+                totalOmset = (qShort * pShort) + (qLong * pLong) + charge;
+                details = { qShort, pShort, qLong, pLong, charge, sizes, totalPcs: qShort + qLong };
             } else {
-                const digitalProduct = document.getElementById('digital-product').value;
-                const digitalTitle = document.getElementById('digital-title').value.trim() || 'Tanpa Nama';
-                const digitalPrice = parseFloat(document.getElementById('digital-unit-price').value) || 0;
-                const calcResult = calcDigitalPrice();
-
-                totalAmount = calcResult.total;
-
-                orderDetails = {
-                    serviceType: 'digital',
-                    digitalProduct: digitalProduct,
-                    digitalTitle: digitalTitle,
-                    digitalPrice: digitalPrice,
-                    digitalLength: parseFloat(document.getElementById('digital-length').value) || 0,
-                    digitalWidth: parseFloat(document.getElementById('digital-width').value) || 0,
-                    digitalQty: parseInt(document.getElementById('digital-qty').value) || 0,
-                    digitalA3Qty: parseInt(document.getElementById('digital-a3-qty').value) || 0,
-                    calcText: calcResult.calcText
+                totalOmset = calcDigitalPrice();
+                details = {
+                    product: document.getElementById('digital-product').value,
+                    title: document.getElementById('digital-title').value,
+                    len: document.getElementById('digital-length').value,
+                    wid: document.getElementById('digital-width').value,
+                    qty: document.getElementById('digital-qty').value,
+                    a3Qty: document.getElementById('digital-a3-qty').value,
+                    unitPrice: document.getElementById('digital-unit-price').value
                 };
             }
 
-            const remainingAmount = totalAmount - dpAmount;
+            const saveOrder = (imgUrl) => {
+                const orderData = {
+                    id: editId ? parseInt(editId) : Date.now(),
+                    serviceType, custName, dateIn, dateDeadline, notes, dp,
+                    totalOmset, details,
+                    status: editId ? (orders.find(o => o.id == editId)?.status || 'Proses') : 'Proses',
+                    img: imgUrl || (editId ? (orders.find(o => o.id == editId)?.img || '') : '')
+                };
 
-            const processSave = (imgBase64) => {
                 if (editId) {
-                    // MENGEDIT ORDER LAMA
-                    orders = orders.map(o => {
-                        if (o.id == editId) {
-                            return {
-                                ...o,
-                                name,
-                                dateIn,
-                                dateDeadline,
-                                notes,
-                                totalAmount,
-                                dpAmount,
-                                remainingAmount,
-                                imgBase64: imgBase64 || o.imgBase64,
-                                ...orderDetails
-                            };
-                        }
-                        return o;
-                    });
-                    alert('Order berhasil diperbarui!');
+                    orders = orders.map(o => o.id == editId ? orderData : o);
                 } else {
-                    // MEMBUAT ORDER BARU
-                    const newOrder = {
-                        id: Date.now(),
-                        name: name,
-                        dateIn: dateIn,
-                        dateDeadline: dateDeadline,
-                        notes: notes,
-                        totalAmount: totalAmount,
-                        dpAmount: dpAmount,
-                        remainingAmount: remainingAmount,
-                        imgBase64: imgBase64 || 'https://via.placeholder.com/45/ff3333/ffffff?text=NO+IMG',
-                        status: 'Proses',
-                        ...orderDetails
-                    };
-                    
-                    orders.push(newOrder);
-
-                    if (dpAmount > 0) {
+                    orders.push(orderData);
+                    // Masukkan DP secara otomatis ke Keuangan Harian sebagai Pemasukan
+                    if(dp > 0) {
                         finances.push({
-                            id: Date.now() + 1,
+                            id: Date.now(),
                             date: dateIn,
                             type: 'income',
-                            desc: `DP Order (${serviceType === 'kaos' ? 'Kaos' : 'Cetak Digital'}) - ${name}`,
-                            amount: dpAmount
+                            desc: `DP Order: ${custName}`,
+                            amount: dp
                         });
                     }
-                    showReceipt(newOrder);
                 }
 
                 saveData();
                 renderAll();
+                showReceipt(orderData);
                 resetOrderForm();
             };
 
             if (imgFile) {
                 const reader = new FileReader();
-                reader.onload = function(evt) {
-                    processSave(evt.target.result);
-                };
+                reader.onload = (event) => saveOrder(event.target.result);
                 reader.readAsDataURL(imgFile);
             } else {
-                if (!editId) {
-                    alert('Harap upload gambar/desain order!');
-                    return;
-                }
-                processSave(null);
+                saveOrder();
             }
-        });
-
-        /* EDIT ORDER */
-        function editOrder(id) {
-            const o = orders.find(item => item.id === id);
-            if (!o) return;
-
-            document.getElementById('edit-order-id').value = o.id;
-            document.getElementById('form-order-title').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit Order (${o.name})`;
-            document.getElementById('btn-submit-order').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan Order`;
-            document.getElementById('btn-cancel-edit').style.display = 'block';
-
-            document.getElementById('service-type').value = o.serviceType;
-            toggleServiceType();
-
-            document.getElementById('cust-name').value = o.name;
-            document.getElementById('date-in').value = o.dateIn;
-            document.getElementById('date-deadline').value = o.dateDeadline;
-            document.getElementById('order-notes').value = o.notes || '';
-            document.getElementById('dp-amount').value = o.dpAmount || 0;
-
-            if (o.serviceType === 'kaos') {
-                document.getElementById('qty-short').value = o.qtyShort || 0;
-                document.getElementById('price-short').value = o.priceShort || 0;
-                document.getElementById('qty-long').value = o.qtyLong || 0;
-                document.getElementById('price-long').value = o.priceLong || 0;
-                document.getElementById('size-details').value = o.sizeDetails || '';
-                document.getElementById('charge-size').value = o.chargeSize || 0;
-            } else {
-                document.getElementById('digital-product').value = o.digitalProduct;
-                toggleDigitalType();
-                document.getElementById('digital-title').value = o.digitalTitle || '';
-                document.getElementById('digital-length').value = o.digitalLength || 1;
-                document.getElementById('digital-width').value = o.digitalWidth || 1;
-                document.getElementById('digital-qty').value = o.digitalQty || 1;
-                document.getElementById('digital-a3-qty').value = o.digitalA3Qty || 1;
-                document.getElementById('digital-unit-price').value = o.digitalPrice || 0;
-                calcDigitalPrice();
-            }
-
-            // Scroll halus ke form
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function resetOrderForm() {
@@ -1063,25 +963,21 @@
             document.getElementById('form-order-title').innerHTML = `<i class="fa-solid fa-cart-plus"></i> Form Order Customer`;
             document.getElementById('btn-submit-order').innerHTML = `<i class="fa-solid fa-plus"></i> Simpan Order & Cetak Nota`;
             document.getElementById('btn-cancel-edit').style.display = 'none';
-            document.getElementById('date-in').value = new Date().toISOString().split('T')[0];
             toggleServiceType();
         }
 
-        /* HAPUS DATA (DAPAT DIGUNAKAN) */
-        function deleteOrder(id) {
-            if (confirm('Yakin ingin menghapus data order ini?')) {
-                orders = orders.filter(o => o.id !== id);
-                saveData();
-                renderAll();
-            }
-        }
+        function handleFinanceSubmit(e) {
+            e.preventDefault();
+            const date = document.getElementById('finance-date').value;
+            const type = document.getElementById('finance-type').value;
+            const desc = document.getElementById('finance-desc').value;
+            const amount = parseFloat(document.getElementById('finance-amount').value) || 0;
 
-        function deleteFinance(id) {
-            if (confirm('Yakin ingin menghapus data transaksi keuangan ini?')) {
-                finances = finances.filter(f => f.id !== id);
-                saveData();
-                renderAll();
-            }
+            finances.push({ id: Date.now(), date, type, desc, amount });
+            saveData();
+            renderAll();
+            document.getElementById('finance-form').reset();
+            document.getElementById('finance-date').value = new Date().toISOString().split('T')[0];
         }
 
         function toggleStatus(id) {
@@ -1095,70 +991,200 @@
             renderAll();
         }
 
-        /* STRUCT NOTA */
-        function showReceipt(order) {
-            const container = document.getElementById('receipt-details');
-            let itemsHtml = '';
+        function deleteOrder(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus order ini?')) {
+                orders = orders.filter(o => o.id !== id);
+                saveData();
+                renderAll();
+            }
+        }
+
+        function deleteFinance(id) {
+            if (confirm('Hapus catatan keuangan ini?')) {
+                finances = finances.filter(f => f.id !== id);
+                saveData();
+                renderAll();
+            }
+        }
+
+        function editOrder(id) {
+            const order = orders.find(o => o.id === id);
+            if (!order) return;
+
+            document.getElementById('edit-order-id').value = order.id;
+            document.getElementById('service-type').value = order.serviceType;
+            toggleServiceType();
+
+            document.getElementById('cust-name').value = order.custName;
+            document.getElementById('date-in').value = order.dateIn;
+            document.getElementById('date-deadline').value = order.dateDeadline;
+            document.getElementById('order-notes').value = order.notes;
+            document.getElementById('dp-amount').value = order.dp;
 
             if (order.serviceType === 'kaos') {
-                if (order.qtyShort > 0) {
-                    itemsHtml += `
-                        <div class="receipt-row">
-                            <span>Lengan Pendek (${order.qtyShort}x @${formatRp(order.priceShort)})</span>
-                            <span>${formatRp(order.qtyShort * order.priceShort)}</span>
-                        </div>`;
-                }
-                if (order.qtyLong > 0) {
-                    itemsHtml += `
-                        <div class="receipt-row">
-                            <span>Lengan Panjang (${order.qtyLong}x @${formatRp(order.priceLong)})</span>
-                            <span>${formatRp(order.qtyLong * order.priceLong)}</span>
-                        </div>`;
-                }
-                if (order.sizeDetails) {
-                    itemsHtml += `
-                        <div style="font-size:0.8rem; background:#f5f5f5; padding:6px; border-radius:4px; margin: 6px 0;">
-                            <strong>Catatan Size:</strong><br>${order.sizeDetails}
-                        </div>`;
-                }
-                if (order.chargeSize > 0) {
-                    itemsHtml += `
-                        <div class="receipt-row">
-                            <span>Cas Ukuran Size</span>
-                            <span>${formatRp(order.chargeSize)}</span>
-                        </div>`;
-                }
+                document.getElementById('qty-short').value = order.details.qShort || 0;
+                document.getElementById('price-short').value = order.details.pShort || 0;
+                document.getElementById('qty-long').value = order.details.qLong || 0;
+                document.getElementById('price-long').value = order.details.pLong || 0;
+                document.getElementById('charge-size').value = order.details.charge || 0;
+                document.getElementById('size-details').value = order.details.sizes || '';
             } else {
-                itemsHtml += `
-                    <div style="font-size:0.8rem; background:#f5f5f5; padding:6px; border-radius:4px; margin: 6px 0;">
-                        <strong>Rincian Cetak:</strong><br>${order.calcText}
-                    </div>`;
+                document.getElementById('digital-product').value = order.details.product;
+                toggleDigitalType();
+                document.getElementById('digital-title').value = order.details.title || '';
+                document.getElementById('digital-length').value = order.details.len || 1;
+                document.getElementById('digital-width').value = order.details.wid || 1;
+                document.getElementById('digital-qty').value = order.details.qty || 1;
+                document.getElementById('digital-a3-qty').value = order.details.a3Qty || 1;
+                document.getElementById('digital-unit-price').value = order.details.unitPrice || 0;
+                calcDigitalPrice();
             }
 
-            if (order.notes) {
-                itemsHtml += `
-                    <div style="font-size:0.8rem; background:#eef7ff; border:1px solid #b3d7ff; padding:6px; border-radius:4px; margin: 6px 0; color:#004085;">
-                        <strong>Catatan Finishing:</strong><br>${order.notes}
-                    </div>`;
+            document.getElementById('form-order-title').innerHTML = `<i class="fa-solid fa-pen-to-square"></i> Edit Order Customer`;
+            document.getElementById('btn-submit-order').innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Update Order`;
+            document.getElementById('btn-cancel-edit').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderAll() {
+            // Hitung Total Omset Keseluruhan (Penjumlahan Semua Order)
+            const grandTotalOmset = orders.reduce((sum, o) => sum + (o.totalOmset || 0), 0);
+            
+            // Hitung Keuangan Harian
+            const totalIncome = finances.filter(f => f.type === 'income').reduce((sum, f) => sum + f.amount, 0);
+            const totalExpense = finances.filter(f => f.type === 'expense').reduce((sum, f) => sum + f.amount, 0);
+            const totalBalance = totalIncome - totalExpense;
+
+            // Hitung Total Kaos Diproduksi
+            const totalPcs = orders.filter(o => o.serviceType === 'kaos').reduce((sum, o) => sum + (o.details.totalPcs || 0), 0);
+
+            // Update Tampilan Ringkasan Kartu
+            document.getElementById('total-omset').innerText = formatRp(grandTotalOmset);
+            document.getElementById('total-income').innerText = formatRp(totalIncome);
+            document.getElementById('total-expense').innerText = formatRp(totalExpense);
+            document.getElementById('total-balance').innerText = formatRp(totalBalance);
+            document.getElementById('total-pcs').innerText = `${totalPcs} Pcs`;
+
+            renderOrderTable();
+            renderSizeMonitorTable();
+            renderFinanceTable();
+        }
+
+        function renderOrderTable() {
+            const tbody = document.getElementById('order-table-body');
+            tbody.innerHTML = '';
+
+            orders.forEach(o => {
+                const sisa = o.totalOmset - o.dp;
+                let rincian = '';
+
+                if (o.serviceType === 'kaos') {
+                    rincian = `Sablon Kaos (${o.details.totalPcs} Pcs)<br><small class="detail-text">${o.notes || '-'}</small>`;
+                } else {
+                    rincian = `${o.details.title || 'Cetak Digital'}<br><small class="detail-text">${o.notes || '-'}</small>`;
+                }
+
+                const imgHtml = o.img ? `<img src="${o.img}" class="img-preview" onclick="window.open('${o.img}')">` : '<i class="fa-solid fa-image text-muted"></i>';
+                const statusBadge = `<span class="badge ${o.status === 'Selesai' ? 'badge-done' : 'badge-pending'}" onclick="toggleStatus(${o.id})">${o.status}</span>`;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${imgHtml}</td>
+                        <td><strong>${o.custName}</strong></td>
+                        <td><small>Masuk: ${o.dateIn}<br>Deadline: ${o.dateDeadline}</small></td>
+                        <td>${rincian}</td>
+                        <td>Omset: <strong>${formatRp(o.totalOmset)}</strong><br><small>DP: ${formatRp(o.dp)}</small></td>
+                        <td style="color: ${sisa > 0 ? 'var(--danger)' : 'var(--success)'}"><strong>${formatRp(sisa)}</strong></td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn print" onclick="showReceiptById(${o.id})" title="Cetak Nota"><i class="fa-solid fa-print"></i></button>
+                                <button class="action-btn edit" onclick="editOrder(${o.id})" title="Edit"><i class="fa-solid fa-pen"></i></button>
+                                <button class="action-btn delete" onclick="deleteOrder(${o.id})" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderSizeMonitorTable() {
+            const tbody = document.getElementById('size-monitor-table-body');
+            tbody.innerHTML = '';
+
+            orders.forEach(o => {
+                let detailSpec = '';
+                if (o.serviceType === 'kaos') {
+                    detailSpec = `<strong>Pendek:</strong> ${o.details.qShort} Pcs, <strong>Panjang:</strong> ${o.details.qLong} Pcs<br><strong>Size:</strong> ${o.details.sizes || '-'}`;
+                } else {
+                    detailSpec = `<strong>Kategori:</strong> ${o.details.product}<br><strong>Detail:</strong> ${o.details.len || 0}m x ${o.details.wid || 0}m / ${o.details.qty || o.details.a3Qty || 0} Unit`;
+                }
+
+                const imgHtml = o.img ? `<img src="${o.img}" class="img-preview" onclick="window.open('${o.img}')">` : '-';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${imgHtml}</td>
+                        <td><strong>${o.custName}</strong></td>
+                        <td><span class="badge badge-pending">${o.serviceType.toUpperCase()}</span></td>
+                        <td>${detailSpec}</td>
+                        <td>${o.notes || '-'}</td>
+                        <td><span class="badge ${o.status === 'Selesai' ? 'badge-done' : 'badge-pending'}">${o.status}</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderFinanceTable() {
+            const tbody = document.getElementById('finance-table-body');
+            tbody.innerHTML = '';
+
+            finances.forEach(f => {
+                const isIncome = f.type === 'income';
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${f.date}</td>
+                        <td>${f.desc}</td>
+                        <td><span class="badge ${isIncome ? 'badge-done' : 'badge-pending'}">${isIncome ? 'Pemasukan' : 'Pengeluaran'}</span></td>
+                        <td style="color: ${isIncome ? 'var(--success)' : 'var(--danger)'}"><strong>${isIncome ? '+' : '-'} ${formatRp(f.amount)}</strong></td>
+                        <td>
+                            <button class="action-btn delete" onclick="deleteFinance(${f.id})"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function showReceiptById(id) {
+            const order = orders.find(o => o.id === id);
+            if (order) showReceipt(order);
+        }
+
+        function showReceipt(order) {
+            const sisa = order.totalOmset - order.dp;
+            let rincianText = '';
+
+            if (order.serviceType === 'kaos') {
+                rincianText = `
+                    <div class="receipt-row"><span>Qty Pendek:</span><span>${order.details.qShort} pcs @ ${formatRp(order.details.pShort)}</span></div>
+                    <div class="receipt-row"><span>Qty Panjang:</span><span>${order.details.qLong} pcs @ ${formatRp(order.details.pLong)}</span></div>
+                    <div class="receipt-row"><span>Cas Ukuran:</span><span>${formatRp(order.details.charge)}</span></div>
+                `;
+            } else {
+                rincianText = `<div class="receipt-row"><span>Pesanan:</span><span>${order.details.title || 'Digital Printing'}</span></div>`;
             }
 
-            container.innerHTML = `
-                <div class="receipt-row"><strong>Nama Customer:</strong> <span>${order.name}</span></div>
-                <div class="receipt-row"><strong>Tgl Masuk:</strong> <span>${order.dateIn}</span></div>
-                <div class="receipt-row"><strong>Deadline:</strong> <span>${order.dateDeadline}</span></div>
-                <br>
-                ${itemsHtml}
-                <div class="receipt-row receipt-total">
-                    <span>Total Tagihan</span>
-                    <span>${formatRp(order.totalAmount)}</span>
-                </div>
-                <div class="receipt-row">
-                    <span>Uang Muka (DP)</span>
-                    <span style="color:green;">-${formatRp(order.dpAmount)}</span>
-                </div>
-                <div class="receipt-row receipt-total" style="color:red;">
-                    <span>Sisa Pembayaran</span>
-                    <span>${formatRp(order.remainingAmount)}</span>
+            document.getElementById('receipt-details').innerHTML = `
+                <div class="receipt-row"><span>Customer:</span><strong>${order.custName}</strong></div>
+                <div class="receipt-row"><span>Tanggal Masuk:</span><span>${order.dateIn}</span></div>
+                <div class="receipt-row"><span>Deadline:</span><span>${order.dateDeadline}</span></div>
+                <hr style="margin: 0.5rem 0; border: none; border-top: 1px dashed #ccc;">
+                ${rincianText}
+                <div class="receipt-row"><span>Catatan:</span><span>${order.notes || '-'}</span></div>
+                <div class="receipt-total">
+                    <div class="receipt-row"><span>Total Omset:</span><strong>${formatRp(order.totalOmset)}</strong></div>
+                    <div class="receipt-row"><span>DP Bayar:</span><span>${formatRp(order.dp)}</span></div>
+                    <div class="receipt-row"><span>Sisa Tagihan:</span><strong style="color: ${sisa > 0 ? 'red' : 'green'}">${formatRp(sisa)}</strong></div>
                 </div>
             `;
             document.getElementById('receipt-modal').style.display = 'flex';
@@ -1168,168 +1194,9 @@
             document.getElementById('receipt-modal').style.display = 'none';
         }
 
-        /* FINANCE FORM */
-        document.getElementById('finance-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const date = document.getElementById('finance-date').value;
-            const type = document.getElementById('finance-type').value;
-            const desc = document.getElementById('finance-desc').value;
-            const amount = parseFloat(document.getElementById('finance-amount').value) || 0;
-
-            const newFinance = {
-                id: Date.now(),
-                date: date,
-                type: type,
-                desc: desc,
-                amount: amount
-            };
-
-            finances.push(newFinance);
-            saveData();
-            renderAll();
-            document.getElementById('finance-form').reset();
-            document.getElementById('finance-date').value = new Date().toISOString().split('T')[0];
-        });
-
-        /* RENDER TABEL & SUMMARY */
         function saveData() {
             localStorage.setItem('hans_orders', JSON.stringify(orders));
             localStorage.setItem('hans_finances', JSON.stringify(finances));
-        }
-
-        function renderAll() {
-            renderSummaryCards();
-            renderOrdersTable();
-            renderMonitorTable();
-            renderFinancesTable();
-        }
-
-        function renderSummaryCards() {
-            const today = new Date().toISOString().split('T')[0];
-            let inc = 0;
-            let exp = 0;
-            let totalPcs = 0;
-
-            finances.forEach(f => {
-                if (f.date === today) {
-                    if (f.type === 'income') inc += f.amount;
-                    if (f.type === 'expense') exp += f.amount;
-                }
-            });
-
-            orders.forEach(o => {
-                if (o.serviceType === 'kaos') {
-                    totalPcs += (o.qtyShort || 0) + (o.qtyLong || 0);
-                }
-            });
-
-            document.getElementById('total-income').innerText = formatRp(inc);
-            document.getElementById('total-expense').innerText = formatRp(exp);
-            document.getElementById('total-balance').innerText = formatRp(inc - exp);
-            document.getElementById('total-pcs').innerText = `${totalPcs} Pcs`;
-        }
-
-        function renderOrdersTable() {
-            const tbody = document.getElementById('order-table-body');
-            tbody.innerHTML = '';
-
-            orders.slice().reverse().forEach(o => {
-                const tr = document.createElement('tr');
-                
-                let orderDetailHtml = '';
-                if (o.serviceType === 'kaos') {
-                    orderDetailHtml = `
-                        <div><strong>Lengan:</strong> Pdk: ${o.qtyShort} | Pjg: ${o.qtyLong}</div>
-                        ${o.sizeDetails ? `<div class="size-box">Size: ${o.sizeDetails}</div>` : ''}
-                    `;
-                } else {
-                    orderDetailHtml = `<div class="detail-text"><strong>Cetak:</strong> ${o.calcText}</div>`;
-                }
-
-                if (o.notes) {
-                    orderDetailHtml += `<div class="detail-text" style="color:var(--accent-gold); margin-top:4px;"><strong>Catatan:</strong> ${o.notes}</div>`;
-                }
-
-                tr.innerHTML = `
-                    <td><img src="${o.imgBase64}" class="img-preview" onclick="window.open('${o.imgBase64}')"></td>
-                    <td><strong>${o.name}</strong></td>
-                    <td><div class="detail-text">Masuk: ${o.dateIn}<br>DL: <span style="color:var(--accent-red);">${o.dateDeadline}</span></div></td>
-                    <td>${orderDetailHtml}</td>
-                    <td><div class="detail-text">Total: ${formatRp(o.totalAmount)}<br>DP: <span style="color:var(--success);">${formatRp(o.dpAmount)}</span></div></td>
-                    <td><strong style="color:var(--danger);">${formatRp(o.remainingAmount)}</strong></td>
-                    <td>
-                        <span class="badge ${o.status === 'Selesai' ? 'badge-done' : 'badge-pending'}" onclick="toggleStatus(${o.id})">
-                            ${o.status}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="action-btns">
-                            <button class="action-btn edit" onclick="editOrder(${o.id})" title="Edit Order"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button class="action-btn delete" onclick="deleteOrder(${o.id})" title="Hapus Order"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function renderMonitorTable() {
-            const tbody = document.getElementById('size-monitor-table-body');
-            tbody.innerHTML = '';
-
-            orders.slice().reverse().forEach(o => {
-                const tr = document.createElement('tr');
-                
-                let layanan = o.serviceType === 'kaos' ? 'Sablon Kaos' : 'Cetak Digital';
-                let specDetail = '';
-
-                if (o.serviceType === 'kaos') {
-                    specDetail = `
-                        <strong>Pendek:</strong> ${o.qtyShort} pcs | <strong>Panjang:</strong> ${o.qtyLong} pcs<br>
-                        <strong>Rincian Size:</strong> ${o.sizeDetails || '-'}
-                    `;
-                } else {
-                    specDetail = `<strong>Rincian Cetak:</strong> ${o.calcText}`;
-                }
-
-                tr.innerHTML = `
-                    <td><img src="${o.imgBase64}" class="img-preview" onclick="window.open('${o.imgBase64}')"></td>
-                    <td><strong>${o.name}</strong></td>
-                    <td><span class="badge badge-pending">${layanan}</span></td>
-                    <td><div class="detail-text">${specDetail}</div></td>
-                    <td><div class="detail-text" style="color:var(--accent-gold);">${o.notes || '-'}</div></td>
-                    <td>
-                        <span class="badge ${o.status === 'Selesai' ? 'badge-done' : 'badge-pending'}">
-                            ${o.status}
-                        </span>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function renderFinancesTable() {
-            const tbody = document.getElementById('finance-table-body');
-            tbody.innerHTML = '';
-
-            finances.slice().reverse().forEach(f => {
-                const tr = document.createElement('tr');
-                const isInc = f.type === 'income';
-                
-                tr.innerHTML = `
-                    <td>${f.date}</td>
-                    <td>${f.desc}</td>
-                    <td><span class="badge ${isInc ? 'badge-done' : 'badge-pending'}">${isInc ? 'Pemasukan' : 'Pengeluaran'}</span></td>
-                    <td style="color:${isInc ? 'var(--success)' : 'var(--danger)'}; font-weight:bold;">
-                        ${isInc ? '+' : '-'} ${formatRp(f.amount)}
-                    </td>
-                    <td>
-                        <button class="action-btn delete" onclick="deleteFinance(${f.id})" title="Hapus"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
         }
     </script>
 </body>
