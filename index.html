@@ -554,7 +554,7 @@
             </div>
             <div style="display: flex; align-items: center; gap: 0.5rem;">
                 <span class="user-badge" id="logged-user-label"><i class="fa-solid fa-user-shield"></i> Admin</span>
-                <button class="btn-reset" onclick="clearAllData()"><i class="fa-solid fa-rotate-left"></i> Bersihkan Data</button>
+                <button class="btn-reset" onclick="clearAllData()"><i class="fa-solid fa-rotate-left"></i> Reset Data</button>
                 <button class="btn btn-logout" onclick="logout()"><i class="fa-solid fa-power-off"></i> Keluar</button>
             </div>
         </header>
@@ -867,6 +867,7 @@
         window.onload = function() {
             const today = new Date().toISOString().split('T')[0];
             if(document.getElementById('date-in')) document.getElementById('date-in').value = today;
+            if(document.getElementById('date-deadline')) document.getElementById('date-deadline').value = today;
             if(document.getElementById('finance-date')) document.getElementById('finance-date').value = today;
             
             toggleServiceType();
@@ -920,12 +921,12 @@
         }
 
         function clearAllData() {
-            if(confirm("Apakah Anda ingin menghapus seluruh data/history transaksi percobaan untuk memulai dari awal?")) {
+            if(confirm("Apakah Anda ingin menghapus seluruh data customer dan keuangan untuk memulai dari awal?")) {
                 orders = [];
                 finances = [];
                 saveData();
                 renderAll();
-                alert("Seluruh data berhasil dibersihkan! Angka kas kembali menjadi Rp 0.");
+                alert("Seluruh data berhasil dibersihkan!");
             }
         }
 
@@ -1044,7 +1045,7 @@
                 };
             }
 
-            const saveOrder = (imgUrl) => {
+            const processSave = (imgUrl) => {
                 const orderData = {
                     id: editId ? parseInt(editId) : Date.now(),
                     serviceType, custName, dateIn, dateDeadline, notes, dp,
@@ -1058,7 +1059,7 @@
                     orders = orders.map(o => o.id == editId ? orderData : o);
                     
                     if (oldOrder) {
-                        const finIndex = finances.findIndex(f => f.orderId === oldOrder.id || f.desc === `DP Order: ${oldOrder.custName}`);
+                        const finIndex = finances.findIndex(f => f.orderId === oldOrder.id);
                         if (finIndex !== -1) {
                             finances[finIndex].amount = dp;
                             finances[finIndex].desc = `DP Order: ${custName}`;
@@ -1095,11 +1096,25 @@
             };
 
             if (imgFile) {
+                // Kompresi Gambar Otomatis Agar localstorage Tidak Penuh / Crash
                 const reader = new FileReader();
-                reader.onload = (event) => saveOrder(event.target.result);
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const maxW = 300;
+                        const scale = maxW / img.width;
+                        canvas.width = maxW;
+                        canvas.height = img.height * scale;
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        processSave(canvas.toDataURL('image/jpeg', 0.7));
+                    };
+                    img.src = e.target.result;
+                };
                 reader.readAsDataURL(imgFile);
             } else {
-                saveOrder();
+                processSave();
             }
         }
 
@@ -1109,7 +1124,10 @@
             document.getElementById('form-order-title').innerHTML = `<i class="fa-solid fa-cart-plus"></i> Form Order Customer`;
             document.getElementById('btn-submit-order').innerHTML = `<i class="fa-solid fa-plus"></i> Simpan Order & Cetak Nota`;
             document.getElementById('btn-cancel-edit').style.display = 'none';
-            document.getElementById('date-in').value = new Date().toISOString().split('T')[0];
+            
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date-in').value = today;
+            document.getElementById('date-deadline').value = today;
             toggleServiceType();
         }
 
@@ -1247,6 +1265,11 @@
             const tbody = document.getElementById('order-table-body');
             tbody.innerHTML = '';
 
+            if (orders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted);">Belum ada order masuk.</td></tr>`;
+                return;
+            }
+
             orders.forEach(o => {
                 const sisa = o.totalOmset - o.dp;
                 let rincian = '';
@@ -1285,6 +1308,11 @@
             const tbody = document.getElementById('size-monitor-table-body');
             tbody.innerHTML = '';
 
+            if (orders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">Belum ada antrean produksi.</td></tr>`;
+                return;
+            }
+
             orders.forEach(o => {
                 let detailSpec = '';
                 if (o.serviceType === 'kaos') {
@@ -1311,6 +1339,11 @@
         function renderFinanceTable() {
             const tbody = document.getElementById('finance-table-body');
             tbody.innerHTML = '';
+
+            if (finances.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Belum ada catatan keuangan harian.</td></tr>`;
+                return;
+            }
 
             finances.forEach(f => {
                 const isIncome = f.type === 'income';
@@ -1371,8 +1404,12 @@
         }
 
         function saveData() {
-            localStorage.setItem('hans_orders', JSON.stringify(orders));
-            localStorage.setItem('hans_finances', JSON.stringify(finances));
+            try {
+                localStorage.setItem('hans_orders', JSON.stringify(orders));
+                localStorage.setItem('hans_finances', JSON.stringify(finances));
+            } catch (err) {
+                alert('Penyimpanan Penuh! Gambar file yang diunggah terlalu besar.');
+            }
         }
     </script>
 </body>
