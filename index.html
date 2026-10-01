@@ -1,82 +1,1552 @@
-<div class="particle p1"></div>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apparel Order Management</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: #050510;
+  color: #fff;
+}
+
+/* ================= LOGIN ================= */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.particle {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: #00ffff;
+  border-radius: 50%;
+  box-shadow: 0 0 15px #00ffff;
+  animation: float 6s infinite ease-in-out;
+}
+
+.p1 { left: 10%; top: 20%; }
+.p2 { left: 80%; top: 15%; animation-delay: 1s; }
+.p3 { left: 20%; top: 80%; animation-delay: 2s; }
+.p4 { left: 90%; top: 70%; animation-delay: 3s; }
+.p5 { left: 50%; top: 10%; animation-delay: 4s; }
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-30px); }
+}
+
+.scene {
+  position: relative;
+  width: 420px;
+}
+
+.neon-ring,
+.neon-ring-2 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+.neon-ring {
+  width: 430px;
+  height: 430px;
+  border: 2px solid #00ffff;
+  box-shadow: 0 0 30px #00ffff;
+  animation: rotate 10s linear infinite;
+}
+
+.neon-ring-2 {
+  width: 450px;
+  height: 450px;
+  border: 2px solid #ff00ff;
+  box-shadow: 0 0 30px #ff00ff;
+  animation: rotate 15s linear infinite reverse;
+}
+
+@keyframes rotate {
+  to { transform: rotate(360deg); }
+}
+
+.card {
+  position: relative;
+  width: 100%;
+  background: rgba(10,10,25,.94);
+  border: 1px solid #00ffff;
+  box-shadow: 0 0 30px rgba(0,255,255,.4);
+  border-radius: 20px;
+  padding: 35px;
+  z-index: 5;
+}
+
+.form h1 {
+  text-align: center;
+  color: #00ffff;
+  text-shadow: 0 0 15px #00ffff;
+  margin-bottom: 10px;
+}
+
+.form-subtitle {
+  text-align: center;
+  color: #aaa;
+  margin-bottom: 25px;
+}
+
+.input-box {
+  position: relative;
+  margin: 20px 0;
+}
+
+.input-box input,
+.input-box select {
+  width: 100%;
+  padding: 14px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid #555;
+  border-radius: 8px;
+  color: white;
+  outline: none;
+}
+
+.input-box label {
+  position: absolute;
+  left: 12px;
+  top: 14px;
+  color: #999;
+  pointer-events: none;
+}
+
+.input-box input:focus + label,
+.input-box input:not(:placeholder-shown) + label {
+  top: -9px;
+  font-size: 12px;
+  background: #0a0a19;
+  color: #00ffff;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  cursor: pointer;
+}
+
+.options {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 0;
+  font-size: 13px;
+}
+
+.options a {
+  color: #00ffff;
+}
+
+.btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg,#00ffff,#ff00ff);
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 20px #00ffff;
+}
+
+.message {
+  text-align: center;
+  margin-top: 15px;
+  color: #00ffff;
+}
+
+.switch {
+  text-align: center;
+  margin-top: 20px;
+  color: #aaa;
+}
+
+.switch span {
+  color: #00ffff;
+  cursor: pointer;
+}
+
+.back {
+  display: none;
+}
+
+/* ================= DASHBOARD ================= */
+
+.dashboard {
+  display: none;
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: fixed;
+  width: 240px;
+  height: 100vh;
+  background: #080817;
+  border-right: 1px solid #00ffff;
+  padding: 25px 15px;
+}
+
+.logo {
+  text-align: center;
+  color: #00ffff;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 35px;
+  text-shadow: 0 0 15px #00ffff;
+}
+
+.menu button {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 10px;
+  background: transparent;
+  color: white;
+  border: 1px solid #333;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.menu button:hover,
+.menu button.active {
+  background: rgba(0,255,255,.1);
+  border-color: #00ffff;
+  color: #00ffff;
+}
+
+.logout {
+  position: absolute;
+  bottom: 25px;
+  left: 15px;
+  width: calc(100% - 30px);
+}
+
+.main {
+  margin-left: 240px;
+  padding: 30px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.topbar h1 {
+  color: #00ffff;
+}
+
+.section {
+  display: none;
+}
+
+.section.active {
+  display: block;
+}
+
+/* ================= CARDS ================= */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.stat {
+  background: #0b0b1c;
+  border: 1px solid #222;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.stat h3 {
+  color: #999;
+  font-size: 14px;
+}
+
+.stat p {
+  font-size: 25px;
+  color: #00ffff;
+  margin-top: 10px;
+}
+
+/* ================= FORM ORDER ================= */
+
+.panel {
+  background: #0b0b1c;
+  border: 1px solid #252538;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 25px;
+}
+
+.panel h2 {
+  margin-bottom: 20px;
+  color: #00ffff;
+}
+
+.order-grid {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 18px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 7px;
+  color: #aaa;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 7px;
+  border: 1px solid #444;
+  background: #111122;
+  color: white;
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.upload-box {
+  border: 2px dashed #00ffff;
+  padding: 25px;
+  text-align: center;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.upload-box input {
+  display: none;
+}
+
+.preview {
+  max-width: 180px;
+  max-height: 150px;
+  margin-top: 15px;
+  display: none;
+  border-radius: 8px;
+}
+
+/* ================= TABLE ================= */
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #252538;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  color: #00ffff;
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.status.proses {
+  background: #443900;
+  color: #ffd900;
+}
+
+.status.selesai {
+  background: #063e2a;
+  color: #00ff9d;
+}
+
+.status.pending {
+  background: #401313;
+  color: #ff6565;
+}
+
+.action-btn {
+  padding: 7px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #ff3b3b;
+  color: white;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:900px) {
+  .sidebar {
+    width: 190px;
+  }
+
+  .main {
+    margin-left: 190px;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2,1fr);
+  }
+
+  .order-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media(max-width:600px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
+  .logout {
+    position: static;
+    margin-top: 20px;
+  }
+
+  .main {
+    margin-left: 0;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= LOGIN ================= -->
+
+<div class="login-page" id="loginPage">
+
+  <div class="particle p1"></div>
   <div class="particle p2"></div>
   <div class="particle p3"></div>
   <div class="particle p4"></div>
   <div class="particle p5"></div>
-  <div class=scene>
-    <div class=neon-ring-2></div>
-    <div class=neon-ring></div>
-    <div class=card id=card>
-      <div class="card-face front">
-        <form class=form id=loginForm>
+
+  <div class="scene">
+
+    <div class="neon-ring-2"></div>
+    <div class="neon-ring"></div>
+
+    <div class="card">
+
+      <!-- LOGIN -->
+      <div class="card-face front" id="loginBox">
+
+        <form class="form" id="loginForm">
+
           <h1>WELCOME</h1>
-          <div class=form-subtitle>
+
+          <div class="form-subtitle">
             Login to your account
           </div>
-          <div class=input-box>
-            <input type=email id=loginEmail placeholder=" " required>
+
+          <div class="input-box">
+            <input type="email" id="loginEmail" placeholder=" " required>
             <label>Email Address</label>
           </div>
-          <div class="input-box password-box">
-            <input type=password id=loginPassword placeholder=" " required>
+
+          <div class="input-box">
+            <input type="password" id="loginPassword" placeholder=" " required>
             <label>Password</label>
-            <span class=password-toggle onclick='togglePassword("loginPassword",this)'>
-              👁
-            </span>
           </div>
-          <div class=options>
-            <label>
-              <input type=checkbox>
-              Remember me
-            </label>
-            <a href=#>
-              Forgot?
-            </a>
-          </div>
-          <button class=btn id=loginBtn type=submit>
+
+          <button class="btn" type="submit">
             LOGIN
           </button>
-          <div class=message id=loginMessage></div>
-          <div class=switch>
+
+          <div class="message" id="loginMessage"></div>
+
+          <div class="switch">
             Don't have an account?
-            <span onclick=showSignup()>
-              Sign Up
-            </span>
+            <span onclick="showSignup()">Sign Up</span>
           </div>
+
         </form>
+
       </div>
-      <div class="card-face back">
-        <form class=form id=signupForm>
+
+      <!-- SIGN UP -->
+      <div class="card-face back" id="signupBox">
+
+        <form class="form" id="signupForm">
+
           <h1>SIGN UP</h1>
-          <div class=form-subtitle>
+
+          <div class="form-subtitle">
             Create your account
           </div>
-          <div class=input-box>
-            <input id=signupName placeholder=" " required>
+
+          <div class="input-box">
+            <input id="signupName" placeholder=" " required>
             <label>Full Name</label>
           </div>
-          <div class=input-box>
-            <input type=email id=signupEmail placeholder=" " required>
+
+          <div class="input-box">
+            <input type="email" id="signupEmail" placeholder=" " required>
             <label>Email Address</label>
           </div>
-          <div class="input-box password-box">
-            <input type=password id=signupPassword placeholder=" " required>
+
+          <div class="input-box">
+            <input type="password" id="signupPassword" placeholder=" " required>
             <label>Password</label>
-            <span class=password-toggle onclick='togglePassword("signupPassword",this)'>
-              👁
-            </span>
           </div>
-          <button class=btn id=signupBtn type=submit>
+
+          <button class="btn" type="submit">
             CREATE ACCOUNT
           </button>
-          <div class=message id=signupMessage></div>
-          <div class=switch>
+
+          <div class="message" id="signupMessage"></div>
+
+          <div class="switch">
             Already have an account?
-            <span onclick=showLogin()>
-              Login
-            </span>
+            <span onclick="showLogin()">Login</span>
           </div>
+
         </form>
+
       </div>
+
     </div>
   </div>
+</div>
+
+
+<!-- ================= DASHBOARD ================= -->
+
+<div class="dashboard" id="dashboard">
+
+  <aside class="sidebar">
+
+    <div class="logo">
+      APPAREL<br>MANAGER
+    </div>
+
+    <div class="menu">
+
+      <button class="active" onclick="showSection('dashboardSection',this)">
+        📊 Dashboard
+      </button>
+
+      <button onclick="showSection('orderSection',this)">
+        🧾 Data Order
+      </button>
+
+      <button onclick="showSection('incomeSection',this)">
+        💰 Pemasukan Harian
+      </button>
+
+    </div>
+
+    <button class="menu logout" onclick="logout()">
+      🚪 Logout
+    </button>
+
+  </aside>
+
+
+  <main class="main">
+
+    <div class="topbar">
+      <h1 id="pageTitle">Dashboard</h1>
+      <div id="today"></div>
+    </div>
+
+
+    <!-- ================= DASHBOARD ================= -->
+
+    <section class="section active" id="dashboardSection">
+
+      <div class="stats">
+
+        <div class="stat">
+          <h3>Total Order</h3>
+          <p id="totalOrder">0</p>
+        </div>
+
+        <div class="stat">
+          <h3>Order Proses</h3>
+          <p id="totalProses">0</p>
+        </div>
+
+        <div class="stat">
+          <h3>Order Selesai</h3>
+          <p id="totalSelesai">0</p>
+        </div>
+
+        <div class="stat">
+          <h3>Total Pemasukan</h3>
+          <p id="totalIncome">Rp 0</p>
+        </div>
+
+      </div>
+
+      <div class="panel">
+
+        <h2>Order Terbaru</h2>
+
+        <div class="table-wrapper">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Bahan</th>
+                <th>Deadline</th>
+                <th>DP</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody id="dashboardOrders"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= DATA ORDER ================= -->
+
+    <section class="section" id="orderSection">
+
+      <div class="panel">
+
+        <h2>➕ Tambah Order Baru</h2>
+
+        <form id="orderForm">
+
+          <div class="order-grid">
+
+            <div class="field">
+              <label>Nama Customer</label>
+              <input type="text" id="customer" required>
+            </div>
+
+            <div class="field">
+              <label>Nomor WhatsApp</label>
+              <input type="text" id="phone">
+            </div>
+
+            <div class="field">
+              <label>Lengan</label>
+
+              <select id="sleeve" required>
+                <option value="">Pilih</option>
+                <option>Lengan Panjang</option>
+                <option>Lengan Pendek</option>
+              </select>
+
+            </div>
+
+            <div class="field">
+
+              <label>Jenis Kerah</label>
+
+              <select id="collar" required>
+
+                <option value="">Pilih</option>
+                <option>O-Neck</option>
+                <option>V-Neck</option>
+                <option>Polo</option>
+                <option>Kerah Shanghai</option>
+                <option>Kerah Hoodie</option>
+
+              </select>
+
+            </div>
+
+            <div class="field">
+
+              <label>Jenis Bahan</label>
+
+              <select id="material" required>
+
+                <option value="">Pilih</option>
+                <option>Dryfit</option>
+                <option>Drifit Premium</option>
+                <option>Cotton Combed</option>
+                <option>Cotton Carded</option>
+                <option>Lacoste</option>
+                <option>Paragon</option>
+                <option>Jersey</option>
+                <option>Lainnya</option>
+
+              </select>
+
+            </div>
+
+            <div class="field">
+
+              <label>Jumlah Pesanan</label>
+              <input type="number" id="quantity" min="1" value="1">
+
+            </div>
+
+            <div class="field">
+
+              <label>Waktu Masuk Order</label>
+              <input type="datetime-local" id="orderDate" required>
+
+            </div>
+
+            <div class="field">
+
+              <label>Deadline</label>
+              <input type="datetime-local" id="deadline" required>
+
+            </div>
+
+            <div class="field">
+
+              <label>Total Harga</label>
+              <input type="number" id="totalPrice" placeholder="Rp">
+
+            </div>
+
+            <div class="field">
+
+              <label>DP Pembayaran</label>
+              <input type="number" id="dp" placeholder="Rp">
+
+            </div>
+
+            <div class="field">
+
+              <label>Status</label>
+
+              <select id="status">
+
+                <option value="pending">Pending</option>
+                <option value="proses">Proses</option>
+                <option value="selesai">Selesai</option>
+
+              </select>
+
+            </div>
+
+            <div class="field full">
+
+              <label>Upload Gambar / Desain</label>
+
+              <label class="upload-box">
+
+                📁 Klik untuk upload desain
+
+                <input type="file"
+                       id="designImage"
+                       accept="image/*">
+
+                <img id="previewImage" class="preview">
+
+              </label>
+
+            </div>
+
+            <div class="field full">
+
+              <label>Keterangan</label>
+
+              <textarea id="notes"
+                        rows="4"
+                        placeholder="Catatan order..."></textarea>
+
+            </div>
+
+            <div class="full">
+
+              <button class="btn" type="submit">
+                💾 SIMPAN ORDER
+              </button>
+
+            </div>
+
+          </div>
+
+        </form>
+
+      </div>
+
+
+      <div class="panel">
+
+        <h2>📋 Semua Order</h2>
+
+        <div class="table-wrapper">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>No</th>
+                <th>Customer</th>
+                <th>Lengan</th>
+                <th>Kerah</th>
+                <th>Bahan</th>
+                <th>Jumlah</th>
+                <th>Masuk</th>
+                <th>Deadline</th>
+                <th>Total</th>
+                <th>DP</th>
+                <th>Status</th>
+                <th>Desain</th>
+                <th>Aksi</th>
+              </tr>
+
+            </thead>
+
+            <tbody id="orderTable"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= PEMASUKAN ================= -->
+
+    <section class="section" id="incomeSection">
+
+      <div class="panel">
+
+        <h2>💰 Pemasukan Harian</h2>
+
+        <form id="incomeForm">
+
+          <div class="order-grid">
+
+            <div class="field">
+
+              <label>Tanggal</label>
+
+              <input type="date"
+                     id="incomeDate"
+                     required>
+
+            </div>
+
+            <div class="field">
+
+              <label>Nama Customer</label>
+
+              <input type="text"
+                     id="incomeCustomer"
+                     required>
+
+            </div>
+
+            <div class="field">
+
+              <label>Keterangan</label>
+
+              <input type="text"
+                     id="incomeDescription"
+                     placeholder="DP / Pelunasan / Cetak">
+
+            </div>
+
+            <div class="field">
+
+              <label>Nominal Pemasukan</label>
+
+              <input type="number"
+                     id="incomeAmount"
+                     required>
+
+            </div>
+
+            <div class="full">
+
+              <button class="btn">
+                💰 SIMPAN PEMASUKAN
+              </button>
+
+            </div>
+
+          </div>
+
+        </form>
+
+      </div>
+
+
+      <div class="panel">
+
+        <h2>📅 Riwayat Pemasukan</h2>
+
+        <div class="table-wrapper">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>No</th>
+                <th>Tanggal</th>
+                <th>Customer</th>
+                <th>Keterangan</th>
+                <th>Nominal</th>
+                <th>Aksi</th>
+              </tr>
+
+            </thead>
+
+            <tbody id="incomeTable"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<script>
+
+/* ================= ACCOUNT ================= */
+
+function showSignup() {
+  document.getElementById("loginBox").style.display = "none";
+  document.getElementById("signupBox").style.display = "block";
+}
+
+function showLogin() {
+  document.getElementById("signupBox").style.display = "none";
+  document.getElementById("loginBox").style.display = "block";
+}
+
+
+/* ================= REGISTER ================= */
+
+document.getElementById("signupForm").addEventListener("submit", function(e){
+
+  e.preventDefault();
+
+  const user = {
+    name: document.getElementById("signupName").value,
+    email: document.getElementById("signupEmail").value,
+    password: document.getElementById("signupPassword").value
+  };
+
+  localStorage.setItem("apparelUser", JSON.stringify(user));
+
+  document.getElementById("signupMessage").innerText =
+    "Akun berhasil dibuat. Silakan login.";
+
+  setTimeout(showLogin, 1000);
+
+});
+
+
+/* ================= LOGIN ================= */
+
+document.getElementById("loginForm").addEventListener("submit", function(e){
+
+  e.preventDefault();
+
+  const user =
+    JSON.parse(localStorage.getItem("apparelUser"));
+
+  if(!user){
+
+    document.getElementById("loginMessage").innerText =
+      "Belum ada akun. Silakan Sign Up.";
+
+    return;
+  }
+
+  const email =
+    document.getElementById("loginEmail").value;
+
+  const password =
+    document.getElementById("loginPassword").value;
+
+  if(email === user.email && password === user.password){
+
+    document.getElementById("loginPage").style.display = "none";
+
+    document.getElementById("dashboard").style.display = "block";
+
+    loadAll();
+
+  } else {
+
+    document.getElementById("loginMessage").innerText =
+      "Email atau password salah.";
+
+  }
+
+});
+
+
+/* ================= LOGOUT ================= */
+
+function logout(){
+
+  document.getElementById("dashboard").style.display = "none";
+
+  document.getElementById("loginPage").style.display = "flex";
+
+}
+
+
+/* ================= MENU ================= */
+
+function showSection(id, button){
+
+  document.querySelectorAll(".section")
+    .forEach(s => s.classList.remove("active"));
+
+  document.getElementById(id)
+    .classList.add("active");
+
+  document.querySelectorAll(".menu button")
+    .forEach(b => b.classList.remove("active"));
+
+  button.classList.add("active");
+
+  const titles = {
+
+    dashboardSection:"Dashboard",
+
+    orderSection:"Data Order",
+
+    incomeSection:"Pemasukan Harian"
+
+  };
+
+  document.getElementById("pageTitle").innerText =
+    titles[id];
+
+}
+
+
+/* ================= DATA ================= */
+
+let orders =
+  JSON.parse(localStorage.getItem("orders")) || [];
+
+let incomes =
+  JSON.parse(localStorage.getItem("incomes")) || [];
+
+
+/* ================= IMAGE ================= */
+
+document.getElementById("designImage")
+.addEventListener("change", function(){
+
+  const file = this.files[0];
+
+  if(!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e){
+
+    const img =
+      document.getElementById("previewImage");
+
+    img.src = e.target.result;
+
+    img.style.display = "block";
+
+  };
+
+  reader.readAsDataURL(file);
+
+});
+
+
+/* ================= ADD ORDER ================= */
+
+document.getElementById("orderForm")
+.addEventListener("submit", function(e){
+
+  e.preventDefault();
+
+  const file =
+    document.getElementById("designImage").files[0];
+
+  const saveOrder = function(image){
+
+    const order = {
+
+      id: Date.now(),
+
+      customer:
+        document.getElementById("customer").value,
+
+      phone:
+        document.getElementById("phone").value,
+
+      sleeve:
+        document.getElementById("sleeve").value,
+
+      collar:
+        document.getElementById("collar").value,
+
+      material:
+        document.getElementById("material").value,
+
+      quantity:
+        document.getElementById("quantity").value,
+
+      orderDate:
+        document.getElementById("orderDate").value,
+
+      deadline:
+        document.getElementById("deadline").value,
+
+      totalPrice:
+        Number(document.getElementById("totalPrice").value) || 0,
+
+      dp:
+        Number(document.getElementById("dp").value) || 0,
+
+      status:
+        document.getElementById("status").value,
+
+      image: image || "",
+
+      notes:
+        document.getElementById("notes").value
+
+    };
+
+    orders.push(order);
+
+    localStorage.setItem(
+      "orders",
+      JSON.stringify(orders)
+    );
+
+    alert("Order berhasil disimpan!");
+
+    document.getElementById("orderForm").reset();
+
+    document.getElementById("previewImage")
+      .style.display = "none";
+
+    renderOrders();
+
+    updateDashboard();
+
+  };
+
+
+  if(file){
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+      saveOrder(e.target.result);
+
+    };
+
+    reader.readAsDataURL(file);
+
+  } else {
+
+    saveOrder("");
+
+  }
+
+});
+
+
+/* ================= RENDER ORDER ================= */
+
+function renderOrders(){
+
+  const table =
+    document.getElementById("orderTable");
+
+  table.innerHTML = "";
+
+  orders.forEach((o,index)=>{
+
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+
+      <td>${index + 1}</td>
+
+      <td>${o.customer}</td>
+
+      <td>${o.sleeve}</td>
+
+      <td>${o.collar}</td>
+
+      <td>${o.material}</td>
+
+      <td>${o.quantity}</td>
+
+      <td>${formatDate(o.orderDate)}</td>
+
+      <td>${formatDate(o.deadline)}</td>
+
+      <td>${rupiah(o.totalPrice)}</td>
+
+      <td>${rupiah(o.dp)}</td>
+
+      <td>
+        <span class="status ${o.status}">
+          ${o.status}
+        </span>
+      </td>
+
+      <td>
+        ${
+          o.image
+          ? `<a href="${o.image}" target="_blank"
+               style="color:#00ffff">
+               Lihat
+             </a>`
+          : "-"
+        }
+      </td>
+
+      <td>
+
+        <button
+          class="action-btn"
+          onclick="deleteOrder(${o.id})">
+          Hapus
+        </button>
+
+      </td>
+
+    `;
+
+    table.appendChild(row);
+
+  });
+
+}
+
+
+/* ================= DELETE ORDER ================= */
+
+function deleteOrder(id){
+
+  if(!confirm("Hapus order ini?")) return;
+
+  orders =
+    orders.filter(o => o.id !== id);
+
+  localStorage.setItem(
+    "orders",
+    JSON.stringify(orders)
+  );
+
+  renderOrders();
+
+  updateDashboard();
+
+}
+
+
+/* ================= INCOME ================= */
+
+document.getElementById("incomeForm")
+.addEventListener("submit", function(e){
+
+  e.preventDefault();
+
+  const income = {
+
+    id: Date.now(),
+
+    date:
+      document.getElementById("incomeDate").value,
+
+    customer:
+      document.getElementById("incomeCustomer").value,
+
+    description:
+      document.getElementById("incomeDescription").value,
+
+    amount:
+      Number(document.getElementById("incomeAmount").value)
+
+  };
+
+  incomes.push(income);
+
+  localStorage.setItem(
+    "incomes",
+    JSON.stringify(incomes)
+  );
+
+  alert("Pemasukan berhasil disimpan!");
+
+  this.reset();
+
+  renderIncome();
+
+  updateDashboard();
+
+});
+
+
+/* ================= RENDER INCOME ================= */
+
+function renderIncome(){
+
+  const table =
+    document.getElementById("incomeTable");
+
+  table.innerHTML = "";
+
+  incomes.forEach((i,index)=>{
+
+    const row =
+      document.createElement("tr");
+
+    row.innerHTML = `
+
+      <td>${index + 1}</td>
+
+      <td>${i.date}</td>
+
+      <td>${i.customer}</td>
+
+      <td>${i.description}</td>
+
+      <td>${rupiah(i.amount)}</td>
+
+      <td>
+
+        <button
+          class="action-btn"
+          onclick="deleteIncome(${i.id})">
+
+          Hapus
+
+        </button>
+
+      </td>
+
+    `;
+
+    table.appendChild(row);
+
+  });
+
+}
+
+
+/* ================= DELETE INCOME ================= */
+
+function deleteIncome(id){
+
+  if(!confirm("Hapus pemasukan ini?")) return;
+
+  incomes =
+    incomes.filter(i => i.id !== id);
+
+  localStorage.setItem(
+    "incomes",
+    JSON.stringify(incomes)
+  );
+
+  renderIncome();
+
+  updateDashboard();
+
+}
+
+
+/* ================= DASHBOARD ================= */
+
+function updateDashboard(){
+
+  document.getElementById("totalOrder")
+    .innerText = orders.length;
+
+  document.getElementById("totalProses")
+    .innerText =
+      orders.filter(o => o.status === "proses").length;
+
+  document.getElementById("totalSelesai")
+    .innerText =
+      orders.filter(o => o.status === "selesai").length;
+
+  const total =
+    incomes.reduce(
+      (sum,i) => sum + Number(i.amount),
+      0
+    );
+
+  document.getElementById("totalIncome")
+    .innerText = rupiah(total);
+
+
+  const table =
+    document.getElementById("dashboardOrders");
+
+  table.innerHTML = "";
+
+  orders.slice(-5).reverse().forEach(o=>{
+
+    const row =
+      document.createElement("tr");
+
+    row.innerHTML = `
+
+      <td>${o.customer}</td>
+
+      <td>${o.material}</td>
+
+      <td>${formatDate(o.deadline)}</td>
+
+      <td>${rupiah(o.dp)}</td>
+
+      <td>
+        <span class="status ${o.status}">
+          ${o.status}
+        </span>
+      </td>
+
+    `;
+
+    table.appendChild(row);
+
+  });
+
+}
+
+
+/* ================= FORMAT ================= */
+
+function rupiah(number){
+
+  return new Intl.NumberFormat(
+    "id-ID",
+    {
+      style:"currency",
+      currency:"IDR",
+      maximumFractionDigits:0
+    }
+  ).format(number || 0);
+
+}
+
+
+function formatDate(date){
+
+  if(!date) return "-";
+
+  return new Date(date).toLocaleString(
+    "id-ID",
+    {
+      day:"2-digit",
+      month:"2-digit",
+      year:"numeric",
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+
+}
+
+
+/* ================= INITIAL ================= */
+
+function loadAll(){
+
+  const now =
+    new Date();
+
+  const localDate =
+    new Date(
+      now.getTime() -
+      now.getTimezoneOffset()*60000
+    )
+    .toISOString()
+    .slice(0,16);
+
+  document.getElementById("orderDate")
+    .value = localDate;
+
+  document.getElementById("incomeDate")
+    .value = localDate.slice(0,10);
+
+  document.getElementById("today")
+    .innerText =
+      now.toLocaleDateString("id-ID");
+
+  renderOrders();
+
+  renderIncome();
+
+  updateDashboard();
+
+}
+
+</script>
+
+</body>
+</html>
