@@ -1,496 +1,82 @@
-// Inisialisasi Data dari LocalStorage saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedUser = localStorage.getItem('hans_logged_user');
-            if (savedUser) {
-                currentUser = savedUser;
-                showDashboard();
-            } else {
-                document.getElementById('login-section').style.display = 'block';
-                document.getElementById('dashboard-section').style.display = 'none';
-            }
-
-            // Set tanggal default ke hari ini
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('date-in').value = today;
-            document.getElementById('date-deadline').value = today;
-            document.getElementById('finance-date').value = today;
-
-            // Load data tersimpan jika ada
-            const savedOrders = localStorage.getItem('hans_orders');
-            if (savedOrders) orders = JSON.parse(savedOrders);
-
-            const savedFinances = localStorage.getItem('hans_finances');
-            if (savedFinances) finances = JSON.parse(savedFinances);
-        });
-
-        // HANDLER LOGIN & LOGOUT
-        document.getElementById('login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const user = document.getElementById('username').value.trim();
-            const pass = document.getElementById('password').value.trim();
-
-            if (user === SINGLE_USERNAME && pass === SINGLE_PASSWORD) {
-                currentUser = user;
-                localStorage.setItem('hans_logged_user', currentUser);
-                showDashboard();
-            } else {
-                alert('Username atau Password salah!');
-            }
-        });
-
-        function logout() {
-            if (confirm('Apakah Anda yakin ingin keluar?')) {
-                localStorage.removeItem('hans_logged_user');
-                currentUser = null;
-                document.getElementById('login-section').style.display = 'block';
-                document.getElementById('dashboard-section').style.display = 'none';
-                document.getElementById('login-form').reset();
-            }
-        }
-
-        function showDashboard() {
-            document.getElementById('login-section').style.display = 'none';
-            document.getElementById('dashboard-section').style.display = 'block';
-            document.getElementById('logged-user-label').innerHTML = `<i class="fa-solid fa-user-shield"></i> ${currentUser}`;
-            renderAll();
-        }
-
-        // NAVIGATION TAB
-        function switchTab(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            
-            document.getElementById(tabId).classList.add('active');
-            btn.classList.add('active');
-        }
-
-        // TOGGLE FORM TYPE (SABLON / DIGITAL)
-        function toggleServiceType() {
-            const type = document.getElementById('service-type').value;
-            const kaosSection = document.getElementById('section-kaos');
-            const digitalSection = document.getElementById('section-digital');
-
-            if (type === 'kaos') {
-                kaosSection.style.display = 'block';
-                digitalSection.style.display = 'none';
-            } else {
-                kaosSection.style.display = 'none';
-                digitalSection.style.display = 'block';
-                toggleDigitalType();
-            }
-        }
-
-        // TOGGLE DIGITAL TYPE & KALKULASI HARGA
-        function toggleDigitalType() {
-            const product = document.getElementById('digital-product').value;
-            const groupMeter = document.getElementById('group-meter');
-            const groupA3 = document.getElementById('group-a3');
-            const groupPcsQty = document.getElementById('group-pcs-qty');
-            const unitPriceInput = document.getElementById('digital-unit-price');
-
-            if (product === 'banner') {
-                groupMeter.style.display = 'grid';
-                groupA3.style.display = 'none';
-                groupPcsQty.style.display = 'block';
-                unitPriceInput.value = HARGA_BANNER_METER;
-            } else if (product === 'stiker_a3') {
-                groupMeter.style.display = 'none';
-                groupA3.style.display = 'block';
-                groupPcsQty.style.display = 'none';
-                unitPriceInput.value = HARGA_STIKER_A3;
-            } else if (product === 'stiker_meter') {
-                groupMeter.style.display = 'grid';
-                groupA3.style.display = 'none';
-                groupPcsQty.style.display = 'block';
-                unitPriceInput.value = HARGA_STIKER_METER;
-            }
-            calcDigitalPrice();
-        }
-
-        function calcDigitalPrice() {
-            const product = document.getElementById('digital-product').value;
-            const unitPrice = parseFloat(document.getElementById('digital-unit-price').value) || 0;
-            let total = 0;
-            let calcText = '';
-
-            if (product === 'banner' || product === 'stiker_meter') {
-                const length = parseFloat(document.getElementById('digital-length').value) || 0;
-                const width = parseFloat(document.getElementById('digital-width').value) || 0;
-                const qty = parseInt(document.getElementById('digital-qty').value) || 1;
-                const area = length * width;
-                total = area * unitPrice * qty;
-                calcText = `${length}m x ${width}m = ${area.toFixed(2)} m² x Rp ${unitPrice.toLocaleString('id-ID')} x ${qty} pcs`;
-            } else if (product === 'stiker_a3') {
-                const sheets = parseInt(document.getElementById('digital-a3-qty').value) || 1;
-                total = sheets * unitPrice;
-                calcText = `${sheets} Lembar A3 x Rp ${unitPrice.toLocaleString('id-ID')}`;
-            }
-
-            document.getElementById('digital-calc-text').innerText = calcText;
-            document.getElementById('digital-subtotal-text').innerText = Math.round(total).toLocaleString('id-ID');
-            return Math.round(total);
-        }
-
-        // SAVE & EDIT ORDER
-        document.getElementById('order-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const editId = document.getElementById('edit-order-id').value;
-            const serviceType = document.getElementById('service-type').value;
-            const custName = document.getElementById('cust-name').value.trim();
-            const dateIn = document.getElementById('date-in').value;
-            const dateDeadline = document.getElementById('date-deadline').value;
-            const dpAmount = parseFloat(document.getElementById('dp-amount').value) || 0;
-            const notes = document.getElementById('order-notes').value.trim();
-            const imgInput = document.getElementById('cust-img');
-
-            let totalOmset = 0;
-            let orderDetails = {};
-
-            if (serviceType === 'kaos') {
-                const qtyShort = parseInt(document.getElementById('qty-short').value) || 0;
-                const priceShort = parseFloat(document.getElementById('price-short').value) || 0;
-                const qtyLong = parseInt(document.getElementById('qty-long').value) || 0;
-                const priceLong = parseFloat(document.getElementById('price-long').value) || 0;
-                const sizeDetails = document.getElementById('size-details').value.trim();
-                const chargeSize = parseFloat(document.getElementById('charge-size').value) || 0;
-
-                totalOmset = (qtyShort * priceShort) + (qtyLong * priceLong) + chargeSize;
-                orderDetails = {
-                    qtyShort, priceShort, qtyLong, priceLong,
-                    sizeDetails, chargeSize, totalPcs: qtyShort + qtyLong
-                };
-            } else {
-                const product = document.getElementById('digital-product').value;
-                const title = document.getElementById('digital-title').value.trim() || 'Cetak Digital';
-                totalOmset = calcDigitalPrice();
-                
-                orderDetails = {
-                    product, title,
-                    length: document.getElementById('digital-length').value,
-                    width: document.getElementById('digital-width').value,
-                    sheets: document.getElementById('digital-a3-qty').value,
-                    qty: document.getElementById('digital-qty').value,
-                    calcText: document.getElementById('digital-calc-text').innerText
-                };
-            }
-
-            const processSave = (imgBase64) => {
-                if (editId) {
-                    const idx = orders.findIndex(o => o.id === editId);
-                    if (idx !== -1) {
-                        orders[idx] = {
-                            ...orders[idx],
-                            serviceType, custName, dateIn, dateDeadline,
-                            totalOmset, dpAmount, notes, orderDetails,
-                            img: imgBase64 || orders[idx].img
-                        };
-                    }
-                } else {
-                    const newOrder = {
-                        id: 'ORD-' + Date.now(),
-                        serviceType, custName, dateIn, dateDeadline,
-                        totalOmset, dpAmount, notes, orderDetails,
-                        status: 'Pending',
-                        img: imgBase64 || 'https://via.placeholder.com/45/1a2332/94a3b8?text=No+Img'
-                    };
-                    orders.push(newOrder);
-
-                    // Otomatis masukkan DP ke Kas Masuk jika ada
-                    if (dpAmount > 0) {
-                        finances.push({
-                            id: 'FIN-' + Date.now(),
-                            date: dateIn,
-                            type: 'income',
-                            desc: `DP Order (${custName})`,
-                            amount: dpAmount
-                        });
-                    }
-                }
-
-                saveData();
-                renderAll();
-                showReceipt(orders[orders.length - 1]);
-                resetOrderForm();
-            };
-
-            if (imgInput.files && imgInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) { processSave(e.target.result); };
-                reader.readAsDataURL(imgInput.files[0]);
-            } else {
-                processSave(null);
-            }
-        });
-
-        function resetOrderForm() {
-            document.getElementById('order-form').reset();
-            document.getElementById('edit-order-id').value = '';
-            document.getElementById('form-order-title').innerHTML = '<i class="fa-solid fa-cart-plus"></i> Form Order Customer';
-            document.getElementById('btn-submit-order').innerHTML = '<i class="fa-solid fa-plus"></i> Simpan Order & Cetak Nota';
-            document.getElementById('btn-cancel-edit').style.display = 'none';
-            toggleServiceType();
-        }
-
-        // SAVE & EDIT KEUANGAN
-        document.getElementById('finance-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const editId = document.getElementById('edit-finance-id').value;
-            const date = document.getElementById('finance-date').value;
-            const type = document.getElementById('finance-type').value;
-            const desc = document.getElementById('finance-desc').value.trim();
-            const amount = parseFloat(document.getElementById('finance-amount').value) || 0;
-
-            if (editId) {
-                const idx = finances.findIndex(f => f.id === editId);
-                if (idx !== -1) {
-                    finances[idx] = { id: editId, date, type, desc, amount };
-                }
-            } else {
-                finances.push({
-                    id: 'FIN-' + Date.now(),
-                    date, type, desc, amount
-                });
-            }
-
-            saveData();
-            renderAll();
-            resetFinanceForm();
-        });
-
-        function resetFinanceForm() {
-            document.getElementById('finance-form').reset();
-            document.getElementById('edit-finance-id').value = '';
-            document.getElementById('form-finance-title').innerHTML = '<i class="fa-solid fa-money-bill-wave"></i> Input Keuangan Harian';
-            document.getElementById('btn-submit-finance').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Catat Transaksi';
-            document.getElementById('btn-cancel-finance').style.display = 'none';
-        }
-
-        // TOGGLE STATUS ORDER
-        function toggleStatus(id) {
-            const order = orders.find(o => o.id === id);
-            if (order) {
-                order.status = order.status === 'Pending' ? 'Selesai' : 'Pending';
-                saveData();
-                renderAll();
-            }
-        }
-
-        // DELETE HANDLERS
-        function deleteOrder(id) {
-            if (confirm('Hapus order ini dari daftar?')) {
-                orders = orders.filter(o => o.id !== id);
-                saveData();
-                renderAll();
-            }
-        }
-
-        function deleteFinance(id) {
-            if (confirm('Hapus pencatatan transaksi ini?')) {
-                finances = finances.filter(f => f.id !== id);
-                saveData();
-                renderAll();
-            }
-        }
-
-        // EDIT HANDLERS
-        function editOrder(id) {
-            const o = orders.find(item => item.id === id);
-            if (!o) return;
-
-            document.getElementById('edit-order-id').value = o.id;
-            document.getElementById('service-type').value = o.serviceType;
-            toggleServiceType();
-
-            document.getElementById('cust-name').value = o.custName;
-            document.getElementById('date-in').value = o.dateIn;
-            document.getElementById('date-deadline').value = o.dateDeadline;
-            document.getElementById('dp-amount').value = o.dpAmount;
-            document.getElementById('order-notes').value = o.notes;
-
-            if (o.serviceType === 'kaos') {
-                document.getElementById('qty-short').value = o.orderDetails.qtyShort || 0;
-                document.getElementById('price-short').value = o.orderDetails.priceShort || 0;
-                document.getElementById('qty-long').value = o.orderDetails.qtyLong || 0;
-                document.getElementById('price-long').value = o.orderDetails.priceLong || 0;
-                document.getElementById('size-details').value = o.orderDetails.sizeDetails || '';
-                document.getElementById('charge-size').value = o.orderDetails.chargeSize || 0;
-            } else {
-                document.getElementById('digital-product').value = o.orderDetails.product || 'banner';
-                toggleDigitalType();
-                document.getElementById('digital-title').value = o.orderDetails.title || '';
-                document.getElementById('digital-length').value = o.orderDetails.length || 1;
-                document.getElementById('digital-width').value = o.orderDetails.width || 1;
-                document.getElementById('digital-a3-qty').value = o.orderDetails.sheets || 1;
-                document.getElementById('digital-qty').value = o.orderDetails.qty || 1;
-                calcDigitalPrice();
-            }
-
-            document.getElementById('form-order-title').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Edit Order Customer';
-            document.getElementById('btn-submit-order').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Update Order';
-            document.getElementById('btn-cancel-edit').style.display = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // RECEIPT MODAL
-        function showReceipt(order) {
-            const sisa = order.totalOmset - order.dpAmount;
-            let detailHTML = '';
-
-            if (order.serviceType === 'kaos') {
-                detailHTML = `
-                    <div class="receipt-row"><span>Pendek:</span> <span>${order.orderDetails.qtyShort} Pcs x Rp ${order.orderDetails.priceShort.toLocaleString('id-ID')}</span></div>
-                    <div class="receipt-row"><span>Panjang:</span> <span>${order.orderDetails.qtyLong} Pcs x Rp ${order.orderDetails.priceLong.toLocaleString('id-ID')}</span></div>
-                    <div class="receipt-row"><span>Cas Ukuran:</span> <span>Rp ${order.orderDetails.chargeSize.toLocaleString('id-ID')}</span></div>
-                    <div class="receipt-row"><span>Size Details:</span> <span>${order.orderDetails.sizeDetails || '-'}</span></div>
-                `;
-            } else {
-                detailHTML = `
-                    <div class="receipt-row"><span>Produk:</span> <span>${order.orderDetails.title}</span></div>
-                    <div class="receipt-row"><span>Rincian:</span> <span>${order.orderDetails.calcText}</span></div>
-                `;
-            }
-
-            document.getElementById('receipt-details').innerHTML = `
-                <div class="receipt-row"><span>No. Nota:</span> <span>${order.id}</span></div>
-                <div class="receipt-row"><span>Customer:</span> <span><strong>${order.custName}</strong></span></div>
-                <div class="receipt-row"><span>Tanggal:</span> <span>${order.dateIn}</span></div>
-                <div class="receipt-row"><span>Deadline:</span> <span>${order.dateDeadline}</span></div>
-                <hr style="border: 1px dashed #ccc; margin: 0.5rem 0;">
-                ${detailHTML}
-                <div class="receipt-row"><span>Catatan:</span> <span>${order.notes || '-'}</span></div>
-                <div class="receipt-total">
-                    <div class="receipt-row"><span>Total Omset:</span> <span>Rp ${order.totalOmset.toLocaleString('id-ID')}</span></div>
-                    <div class="receipt-row"><span>DP / Dibayar:</span> <span>Rp ${order.dpAmount.toLocaleString('id-ID')}</span></div>
-                    <div class="receipt-row" style="color: ${sisa > 0 ? '#ff3333' : '#00e676'};">
-                        <span>Sisa Tagihan:</span> <span>Rp ${sisa.toLocaleString('id-ID')}</span>
-                    </div>
-                </div>
-            `;
-            document.getElementById('receipt-modal').style.display = 'flex';
-        }
-
-        function closeReceipt() {
-            document.getElementById('receipt-modal').style.display = 'none';
-        }
-
-        // RENDER DATA TO UI
-        function renderAll() {
-            let totalOmset = 0;
-            let totalPcsKaos = 0;
-
-            // Render Table Order
-            const orderTbody = document.getElementById('order-table-body');
-            const sizeTbody = document.getElementById('size-monitor-table-body');
-            orderTbody.innerHTML = '';
-            sizeTbody.innerHTML = '';
-
-            orders.forEach(o => {
-                totalOmset += o.totalOmset;
-                const sisa = o.totalOmset - o.dpAmount;
-
-                let rincianText = '';
-                let sizeMonitorText = '';
-
-                if (o.serviceType === 'kaos') {
-                    totalPcsKaos += (o.orderDetails.totalPcs || 0);
-                    rincianText = `<strong>Kaos:</strong> ${o.orderDetails.qtyShort} Pendek, ${o.orderDetails.qtyLong} Panjang`;
-                    sizeMonitorText = o.orderDetails.sizeDetails || 'Tidak ada detail size';
-                } else {
-                    rincianText = `<strong>Digital:</strong> ${o.orderDetails.title}<br><small>${o.orderDetails.calcText}</small>`;
-                    sizeMonitorText = o.orderDetails.calcText;
-                }
-
-                // Append to Order Table
-                const badgeClass = o.status === 'Selesai' ? 'badge-done' : 'badge-pending';
-                orderTbody.innerHTML += `
-                    <tr>
-                        <td><img src="${o.img}" class="img-preview" onclick="window.open('${o.img}')"></td>
-                        <td><strong>${o.custName}</strong></td>
-                        <td><small>Masuk: ${o.dateIn}<br>DL: <span style="color:var(--danger)">${o.dateDeadline}</span></small></td>
-                        <td>${rincianText}<br><small><i>Cat: ${o.notes || '-'}</i></small></td>
-                        <td>Total: Rp ${o.totalOmset.toLocaleString('id-ID')}<br><small>DP: Rp ${o.dpAmount.toLocaleString('id-ID')}</small></td>
-                        <td style="color:${sisa > 0 ? 'var(--danger)' : 'var(--success)'}; font-weight:bold;">
-                            Rp ${sisa.toLocaleString('id-ID')}
-                        </td>
-                        <td><span class="badge ${badgeClass}" onclick="toggleStatus('${o.id}')">${o.status}</span></td>
-                        <td>
-                            <div class="action-btns">
-                                <button class="action-btn edit" onclick="editOrder('${o.id}')"><i class="fa-solid fa-pen"></i></button>
-                                <button class="action-btn print" onclick="showReceipt(orders.find(item => item.id === '${o.id}'))"><i class="fa-solid fa-print"></i></button>
-                                <button class="action-btn delete" onclick="deleteOrder('${o.id}')"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-
-                // Append to Size Monitor Table
-                sizeTbody.innerHTML += `
-                    <tr>
-                        <td><img src="${o.img}" class="img-preview" onclick="window.open('${o.img}')"></td>
-                        <td><strong>${o.custName}</strong></td>
-                        <td><span class="badge" style="background:var(--bg-card); border:1px solid var(--border-color);">${o.serviceType.toUpperCase()}</span></td>
-                        <td style="white-space: pre-wrap;">${sizeMonitorText}</td>
-                        <td>${o.notes || '-'}</td>
-                        <td><span class="badge ${badgeClass}">${o.status}</span></td>
-                    </tr>
-                `;
-            });
-
-            // Render Finance Table & Totals
-            let totalIncome = 0;
-            let totalExpense = 0;
-            const finTbody = document.getElementById('finance-table-body');
-            finTbody.innerHTML = '';
-
-            finances.forEach(f => {
-                if (f.type === 'income') totalIncome += f.amount;
-                else totalExpense += f.amount;
-
-                const typeBadge = f.type === 'income' 
-                    ? '<span class="badge badge-done">Pemasukan</span>' 
-                    : '<span class="badge badge-pending" style="color:var(--danger); border-color:var(--danger);">Pengeluaran</span>';
-
-                finTbody.innerHTML += `
-                    <tr>
-                        <td>${f.date}</td>
-                        <td>${f.desc}</td>
-                        <td>${typeBadge}</td>
-                        <td style="font-weight:bold; color:${f.type === 'income' ? 'var(--success)' : 'var(--danger)'}">
-                            ${f.type === 'income' ? '+' : '-'} Rp ${f.amount.toLocaleString('id-ID')}
-                        </td>
-                        <td>
-                            <button class="action-btn delete" onclick="deleteFinance('${f.id}')"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            // Update Cards Summary
-            document.getElementById('total-omset').innerText = `Rp ${totalOmset.toLocaleString('id-ID')}`;
-            document.getElementById('total-income').innerText = `Rp ${totalIncome.toLocaleString('id-ID')}`;
-            document.getElementById('total-expense').innerText = `Rp ${totalExpense.toLocaleString('id-ID')}`;
-            document.getElementById('total-balance').innerText = `Rp ${(totalIncome - totalExpense).toLocaleString('id-ID')}`;
-            document.getElementById('total-pcs').innerText = `${totalPcsKaos} Pcs`;
-        }
-
-        // SAVE DATA TO LOCAL STORAGE
-        function saveData() {
-            localStorage.setItem('hans_orders', JSON.stringify(orders));
-            localStorage.setItem('hans_finances', JSON.stringify(finances));
-        }
-
-        // RESET ALL DATA
-        function clearAllData() {
-            if (confirm('APAKAH ANDA YAKIN? Semua data order & keuangan akan dihapus permanen!')) {
-                localStorage.removeItem('hans_orders');
-                localStorage.removeItem('hans_finances');
-                orders = [];
-                finances = [];
-                renderAll();
-                alert('Semua data berhasil di-reset.');
-            }
-        }
-    </script>
-</body>
-</html>
+<div class="particle p1"></div>
+  <div class="particle p2"></div>
+  <div class="particle p3"></div>
+  <div class="particle p4"></div>
+  <div class="particle p5"></div>
+  <div class=scene>
+    <div class=neon-ring-2></div>
+    <div class=neon-ring></div>
+    <div class=card id=card>
+      <div class="card-face front">
+        <form class=form id=loginForm>
+          <h1>WELCOME</h1>
+          <div class=form-subtitle>
+            Login to your account
+          </div>
+          <div class=input-box>
+            <input type=email id=loginEmail placeholder=" " required>
+            <label>Email Address</label>
+          </div>
+          <div class="input-box password-box">
+            <input type=password id=loginPassword placeholder=" " required>
+            <label>Password</label>
+            <span class=password-toggle onclick='togglePassword("loginPassword",this)'>
+              👁
+            </span>
+          </div>
+          <div class=options>
+            <label>
+              <input type=checkbox>
+              Remember me
+            </label>
+            <a href=#>
+              Forgot?
+            </a>
+          </div>
+          <button class=btn id=loginBtn type=submit>
+            LOGIN
+          </button>
+          <div class=message id=loginMessage></div>
+          <div class=switch>
+            Don't have an account?
+            <span onclick=showSignup()>
+              Sign Up
+            </span>
+          </div>
+        </form>
+      </div>
+      <div class="card-face back">
+        <form class=form id=signupForm>
+          <h1>SIGN UP</h1>
+          <div class=form-subtitle>
+            Create your account
+          </div>
+          <div class=input-box>
+            <input id=signupName placeholder=" " required>
+            <label>Full Name</label>
+          </div>
+          <div class=input-box>
+            <input type=email id=signupEmail placeholder=" " required>
+            <label>Email Address</label>
+          </div>
+          <div class="input-box password-box">
+            <input type=password id=signupPassword placeholder=" " required>
+            <label>Password</label>
+            <span class=password-toggle onclick='togglePassword("signupPassword",this)'>
+              👁
+            </span>
+          </div>
+          <button class=btn id=signupBtn type=submit>
+            CREATE ACCOUNT
+          </button>
+          <div class=message id=signupMessage></div>
+          <div class=switch>
+            Already have an account?
+            <span onclick=showLogin()>
+              Login
+            </span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
