@@ -5,11 +5,26 @@
             --dark-shadow: #a3b1c6;
             --accent-color: #4299e1;
             
-            /* Error colors */
-            --error-color: #e53e3e;
-            --error-dark: #d09a9a;
-            --error-light: #fff5f5;
-        }
+            .logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo img {
+    width: 150px;
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+}
+
+.logo-text {
+    color: #00ffff;
+    font-size: 18px;
+    font-weight: bold;
+    text-shadow: 0 0 12px #00ffff;
+}
 
         * {
             box-sizing: border-box;
