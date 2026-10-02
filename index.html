@@ -98,6 +98,7 @@ body{
     top:14px;
     color:#999;
     pointer-events:none;
+    transition:0.2s;
 }
 
 .input-box input:focus+label,
@@ -201,7 +202,7 @@ body{
 
 .topbar{
     display:flex;
-    justify-content:space-between;
+    justify-space-between;
     margin-bottom:25px;
 }
 
@@ -396,19 +397,12 @@ th{
     border-radius:5px;
     cursor:pointer;
     color:#fff;
+    margin-right:4px;
 }
 
-.delete{
-    background:#e33;
-}
-
-.edit{
-    background:#086cff;
-}
-
-.view{
-    background:#444;
-}
+.delete{ background:#e33; }
+.edit{ background:#086cff; }
+.view{ background:#444; }
 
 /* ================= SEARCH ================= */
 
@@ -428,2108 +422,899 @@ th{
 /* ================= RESPONSIVE ================= */
 
 @media(max-width:1000px){
-
-    .stats{
-        grid-template-columns:repeat(2,1fr);
-    }
-
+    .stats{ grid-template-columns:repeat(2,1fr); }
 }
 
 @media(max-width:700px){
-
-    .sidebar{
-        position:relative;
-        width:100%;
-        height:auto;
-    }
-
-    .logout{
-        position:static;
-        margin-top:10px;
-    }
-
-    .main{
-        margin-left:0;
-    }
-
-    .order-grid{
-        grid-template-columns:1fr;
-    }
-
-    .order-type{
-        grid-template-columns:1fr;
-    }
-
-    .stats{
-        grid-template-columns:1fr;
-    }
-
+    .sidebar{ position:relative; width:100%; height:auto; }
+    .logout{ position:static; margin-top:10px; }
+    .main{ margin-left:0; }
+    .order-grid, .order-type, .stats{ grid-template-columns:1fr; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- ================= LOGIN ================= -->
-
-<div class="login-page" id="loginPage">
-
-
-<div class="particle p1"></div>
-<div class="particle p2"></div>
-<div class="particle p3"></div>
-<div class="particle p4"></div>
-<div class="particle p5"></div>
-
-<div class="scene">
-
-<div class="card">
-
 <!-- LOGIN -->
+<div class="login-page" id="loginPage">
+    <div class="particle p1"></div>
+    <div class="particle p2"></div>
+    <div class="particle p3"></div>
+    <div class="particle p4"></div>
+    <div class="particle p5"></div>
 
-<div id="loginBox">
+    <div class="scene">
+        <div class="card">
+            <!-- LOGIN BOX -->
+            <div id="loginBox">
+                <form class="form" id="loginForm">
+                    <h1>HANS SABLON</h1>
+                    <div class="form-subtitle">Login to your account</div>
+                    <div class="input-box">
+                        <input type="email" id="loginEmail" placeholder=" " required>
+                        <label>Email Address</label>
+                    </div>
+                    <div class="input-box">
+                        <input type="password" id="loginPassword" placeholder=" " required>
+                        <label>Password</label>
+                    </div>
+                    <button class="btn" type="submit">LOGIN</button>
+                    <div class="message" id="loginMessage"></div>
+                    <div class="switch">
+                        Belum punya akun? <span onclick="showSignup()">Sign Up</span>
+                    </div>
+                </form>
+            </div>
 
-<form class="form" id="loginForm">
-
-<h1>HANS SABLON</h1>
-
-<div class="form-subtitle">
-Login to your account
+            <!-- SIGNUP BOX -->
+            <div id="signupBox">
+                <form class="form" id="signupForm">
+                    <h1>SIGN UP</h1>
+                    <div class="form-subtitle">Create your account</div>
+                    <div class="input-box">
+                        <input id="signupName" placeholder=" " required>
+                        <label>Nama</label>
+                    </div>
+                    <div class="input-box">
+                        <input type="email" id="signupEmail" placeholder=" " required>
+                        <label>Email</label>
+                    </div>
+                    <div class="input-box">
+                        <input type="password" id="signupPassword" placeholder=" " required>
+                        <label>Password</label>
+                    </div>
+                    <button class="btn" type="submit">CREATE ACCOUNT</button>
+                    <div class="message" id="signupMessage"></div>
+                    <div class="switch">
+                        Sudah punya akun? <span onclick="showLogin()">Login</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="input-box">
-<input type="email" id="loginEmail" placeholder=" " required>
-<label>Email Address</label>
-</div>
-
-<div class="input-box">
-<input type="password" id="loginPassword" placeholder=" " required>
-<label>Password</label>
-</div>
-
-<button class="btn">
-LOGIN
-</button>
-
-<div class="message" id="loginMessage"></div>
-
-<div class="switch">
-Belum punya akun?
-<span onclick="showSignup()">Sign Up</span>
-</div>
-
-</form>
-
-</div>
-
-<!-- SIGNUP -->
-
-<div id="signupBox">
-
-<form class="form" id="signupForm">
-
-<h1>SIGN UP</h1>
-
-<div class="form-subtitle">
-Create your account
-</div>
-
-<div class="input-box">
-<input id="signupName" placeholder=" " required>
-<label>Nama</label>
-</div>
-
-<div class="input-box">
-<input type="email" id="signupEmail" placeholder=" " required>
-<label>Email</label>
-</div>
-
-<div class="input-box">
-<input type="password" id="signupPassword" placeholder=" " required>
-<label>Password</label>
-</div>
-
-<button class="btn">
-CREATE ACCOUNT
-</button>
-
-<div class="message" id="signupMessage"></div>
-
-<div class="switch">
-Sudah punya akun?
-<span onclick="showLogin()">Login</span>
-</div>
-
-</form>
-
-</div>
-
-</div>
-</div>
-</div>
-
-
-<!-- ================= DASHBOARD ================= -->
-
+<!-- DASHBOARD -->
 <div class="dashboard" id="dashboard">
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-text">KEUANGAN LAPAK SABLON</div>
+        </div>
+        <div class="menu">
+            <button class="active" onclick="showSection('dashboardSection',this)">📊 Dashboard</button>
+            <button onclick="showSection('orderSection',this)">🧾 Data Order</button>
+            <button onclick="showSection('incomeSection',this)">💰 Pemasukan Harian</button>
+            <button onclick="showSection('priceSection',this)">⚙️ Pengaturan Harga</button>
+        </div>
+        <button class="menu logout" onclick="logout()">🚪 Logout</button>
+    </aside>
 
-<aside class="sidebar">
+    <main class="main">
+        <div class="topbar">
+            <h1 id="pageTitle">Dashboard</h1>
+            <div id="today"></div>
+        </div>
 
-<div class="logo">
-    <img src="hans_Logo.png" alt="Hans Screen Printing Solution">
-    <div class="logo-text">KEUANGAN LAPAK SABLON</div>
+        <!-- DASHBOARD SECTION -->
+        <section id="dashboardSection" class="section active">
+            <div class="stats">
+                <div class="stat">
+                    <h3>Total Order</h3>
+                    <p id="totalOrder">0</p>
+                </div>
+                <div class="stat">
+                    <h3>Order Proses</h3>
+                    <p id="totalProses">0</p>
+                </div>
+                <div class="stat">
+                    <h3>Order Selesai</h3>
+                    <p id="totalSelesai">0</p>
+                </div>
+                <div class="stat">
+                    <h3>Total Pemasukan</h3>
+                    <p id="totalIncome">Rp 0</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Order Terbaru</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Jenis</th>
+                                <th>Deadline</th>
+                                <th>Total</th>
+                                <th>DP</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboardOrders"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ORDER SECTION -->
+        <section id="orderSection" class="section">
+            <div class="panel">
+                <h2>➕ Tambah Order</h2>
+                <form id="orderForm">
+                    <input type="hidden" id="editId">
+
+                    <div class="field full">
+                        <label>Jenis Order</label>
+                        <div class="order-type">
+                            <label class="type-card selected">
+                                <input type="radio" name="orderType" value="apparel" checked> 👕 T-SHIRT
+                            </label>
+                            <label class="type-card">
+                                <input type="radio" name="orderType" value="banner"> 🖼️️ BANNER
+                            </label>
+                            <label class="type-card">
+                                <input type="radio" name="orderType" value="stiker"> 🏷️ STIKER
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- APPAREL -->
+                    <div id="apparelFields" class="order-grid">
+                        <div class="field">
+                            <label>Nama Customer</label>
+                            <input id="customer">
+                        </div>
+                        <div class="field">
+                            <label>No. WhatsApp</label>
+                            <input id="phone">
+                        </div>
+                        <div class="field">
+                            <label>Model Lengan</label>
+                            <select id="sleeve">
+                                <option value="pendek">Lengan Pendek</option>
+                                <option value="panjang">Lengan Panjang</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Jenis Kerah</label>
+                            <select id="collar">
+                                <option>O-Neck</option>
+                                <option>V-Neck</option>
+                                <option>Polo</option>
+                                <option>Shanghai</option>
+                                <option>Hoodie</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Jenis Bahan</label>
+                            <select id="material">
+                                <option>Dryfit</option>
+                                <option>Drifit Premium</option>
+                                <option>Cotton Combed</option>
+                                <option>Cotton Carded</option>
+                                <option>Paragon</option>
+                                <option>Jersey</option>
+                                <option>Lacoste</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Jumlah</label>
+                            <input type="number" id="quantity" min="1" value="1">
+                        </div>
+                    </div>
+
+                    <!-- BANNER -->
+                    <div id="bannerFields" class="order-grid" style="display:none">
+                        <div class="field">
+                            <label>Nama Customer</label>
+                            <input id="bannerCustomer">
+                        </div>
+                        <div class="field">
+                            <label>Jumlah Meter</label>
+                            <input type="number" id="bannerMeter" min="0" step="0.01" value="1">
+                        </div>
+                    </div>
+
+                    <!-- STIKER -->
+                    <div id="stikerFields" class="order-grid" style="display:none">
+                        <div class="field">
+                            <label>Nama Customer</label>
+                            <input id="stikerCustomer">
+                        </div>
+                        <div class="field">
+                            <label>Jenis Stiker</label>
+                            <select id="stikerType">
+                                <option value="a3">Stiker A3</option>
+                                <option value="meter">Stiker Per Meter</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Jumlah</label>
+                            <input type="number" id="stikerQty" min="1" value="1">
+                        </div>
+                    </div>
+
+                    <!-- COMMON FIELDS -->
+                    <div class="order-grid" style="margin-top:15px;">
+                        <div class="field">
+                            <label>Waktu Masuk Order</label>
+                            <input type="datetime-local" id="orderDate" required>
+                        </div>
+                        <div class="field">
+                            <label>Deadline</label>
+                            <input type="datetime-local" id="deadline" required>
+                        </div>
+                        <div class="field">
+                            <label>Total Harga</label>
+                            <input type="number" id="totalPrice" readonly>
+                        </div>
+                        <div class="field">
+                            <label>DP Pembayaran</label>
+                            <input type="number" id="dp" value="0">
+                        </div>
+                        <div class="field">
+                            <label>Status</label>
+                            <select id="status">
+                                <option value="pending">Pending</option>
+                                <option value="proses">Proses</option>
+                                <option value="selesai">Selesai</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>Sisa Pembayaran</label>
+                            <input type="number" id="remaining" readonly>
+                        </div>
+                        <div class="field full">
+                            <label>Upload Gambar / Desain</label>
+                            <label class="upload-box">
+                                📁 Klik untuk upload desain
+                                <input type="file" id="designImage" accept="image/*">
+                                <img id="previewImage" class="preview">
+                            </label>
+                        </div>
+                        <div class="field full">
+                            <label>Catatan</label>
+                            <textarea id="notes" rows="3" placeholder="Catatan order..."></textarea>
+                        </div>
+                        <div class="full">
+                            <button class="btn" type="submit" id="saveOrderBtn">💾 SIMPAN ORDER</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel">
+                <h2>📋 Semua Order</h2>
+                <div class="search">
+                    <input id="searchOrder" placeholder="🔎 Cari nama customer / jenis order...">
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Customer</th>
+                                <th>Jenis</th>
+                                <th>Detail</th>
+                                <th>Jumlah</th>
+                                <th>Deadline</th>
+                                <th>Total</th>
+                                <th>DP</th>
+                                <th>Sisa</th>
+                                <th>Status</th>
+                                <th>Desain</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- INCOME SECTION -->
+        <section id="incomeSection" class="section">
+            <div class="panel">
+                <h2>💰 Pemasukan Harian</h2>
+                <form id="incomeForm">
+                    <div class="order-grid">
+                        <div class="field">
+                            <label>Tanggal</label>
+                            <input type="date" id="incomeDate" required>
+                        </div>
+                        <div class="field">
+                            <label>Customer</label>
+                            <input id="incomeCustomer" required>
+                        </div>
+                        <div class="field">
+                            <label>Keterangan</label>
+                            <input id="incomeDescription" placeholder="DP / Pelunasan / Cetak">
+                        </div>
+                        <div class="field">
+                            <label>Nominal</label>
+                            <input type="number" id="incomeAmount" required>
+                        </div>
+                        <div class="full">
+                            <button class="btn" type="submit">💰 SIMPAN PEMASUKAN</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel">
+                <h2>📅 Riwayat Pemasukan</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Tanggal</th>
+                                <th>Customer</th>
+                                <th>Keterangan</th>
+                                <th>Nominal</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="incomeTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRICE SECTION -->
+        <section id="priceSection" class="section">
+            <div class="panel">
+                <h2>⚙️ Pengaturan Harga</h2>
+                <form id="priceForm">
+                    <div class="order-grid">
+                        <div class="field">
+                            <label>Harga Apparel Lengan Pendek</label>
+                            <input type="number" id="priceShort" value="75000">
+                        </div>
+                        <div class="field">
+                            <label>Harga Apparel Lengan Panjang</label>
+                            <input type="number" id="priceLong" value="85000">
+                        </div>
+                        <div class="field">
+                            <label>Harga Banner / Meter</label>
+                            <input type="number" id="priceBanner" value="35000">
+                        </div>
+                        <div class="field">
+                            <label>Harga Stiker A3</label>
+                            <input type="number" id="priceStickerA3" value="25000">
+                        </div>
+                        <div class="field">
+                            <label>Harga Stiker / Meter</label>
+                            <input type="number" id="priceStickerMeter" value="50000">
+                        </div>
+                        <div class="full">
+                            <button class="btn" type="submit">💾 SIMPAN HARGA</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
 </div>
-
-<div class="menu">
-
-<button class="active"
-onclick="showSection('dashboardSection',this)">
-📊 Dashboard
-</button>
-
-<button
-onclick="showSection('orderSection',this)">
-🧾 Data Order
-</button>
-
-<button
-onclick="showSection('incomeSection',this)">
-💰 Pemasukan Harian
-</button>
-
-<button
-onclick="showSection('priceSection',this)">
-⚙️ Pengaturan Harga
-</button>
-
-</div>
-
-<button class="menu logout"
-onclick="logout()">
-🚪 Logout
-</button>
-
-</aside>
-
-
-<main class="main">
-
-<div class="topbar">
-
-<h1 id="pageTitle">
-Dashboard
-</h1>
-
-<div id="today"></div>
-
-</div>
-
-
-<!-- ================= DASHBOARD ================= -->
-
-<section id="dashboardSection"
-class="section active">
-
-<div class="stats">
-
-<div class="stat">
-<h3>Total Order</h3>
-<p id="totalOrder">0</p>
-</div>
-
-<div class="stat">
-<h3>Order Proses</h3>
-<p id="totalProses">0</p>
-</div>
-
-<div class="stat">
-<h3>Order Selesai</h3>
-<p id="totalSelesai">0</p>
-</div>
-
-<div class="stat">
-<h3>Total Pemasukan</h3>
-<p id="totalIncome">Rp 0</p>
-</div>
-
-</div>
-
-<div class="panel">
-
-<h2>Order Terbaru</h2>
-
-<div class="table-wrapper">
-
-<table>
-
-<thead>
-<tr>
-<th>Customer</th>
-<th>Jenis</th>
-<th>Deadline</th>
-<th>Total</th>
-<th>DP</th>
-<th>Status</th>
-</tr>
-</thead>
-
-<tbody id="dashboardOrders"></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- ================= ORDER ================= -->
-
-<section id="orderSection"
-class="section">
-
-<div class="panel">
-
-<h2>➕ Tambah Order</h2>
-
-<form id="orderForm">
-
-<input type="hidden" id="editId">
-
-<div class="field full">
-
-<label>
-Jenis Order
-</label>
-
-<div class="order-type">
-
-<label class="type-card">
-
-<input
-type="radio"
-name="orderType"
-value="apparel"
-checked>
-
-👕 T-SHIRT
-
-</label>
-
-<label class="type-card">
-
-<input
-type="radio"
-name="orderType"
-value="banner">
-
-🖼️ BANNER
-
-</label>
-
-<label class="type-card">
-
-<input
-type="radio"
-name="orderType"
-value="stiker">
-
-🏷️ STIKER
-
-</label>
-
-</div>
-
-</div>
-
-
-<!-- APPAREL -->
-
-<div id="apparelFields"
-class="order-grid">
-
-<div class="field">
-
-<label>Nama Customer</label>
-
-<input
-id="customer"
-required>
-
-</div>
-
-<div class="field">
-
-<label>No. WhatsApp</label>
-
-<input id="phone">
-
-</div>
-
-<div class="field">
-
-<label>Model Lengan</label>
-
-<select id="sleeve">
-
-<option value="pendek">
-Lengan Pendek
-</option>
-
-<option value="panjang">
-Lengan Panjang
-</option>
-
-</select>
-
-</div>
-
-<div class="field">
-
-<label>Jenis Kerah</label>
-
-<select id="collar">
-
-<option>O-Neck</option>
-<option>V-Neck</option>
-<option>Polo</option>
-<option>Shanghai</option>
-<option>Hoodie</option>
-
-</select>
-
-</div>
-
-<div class="field">
-
-<label>Jenis Bahan</label>
-
-<select id="material">
-
-<option>Dryfit</option>
-<option>Drifit Premium</option>
-<option>Cotton Combed</option>
-<option>Cotton Carded</option>
-<option>Paragon</option>
-<option>Jersey</option>
-<option>Lacoste</option>
-
-</select>
-
-</div>
-
-<div class="field">
-
-<label>Jumlah</label>
-
-<input
-type="number"
-id="quantity"
-min="1"
-value="1">
-
-</div>
-
-</div>
-
-
-<!-- BANNER -->
-
-<div id="bannerFields"
-class="order-grid"
-style="display:none">
-
-<div class="field">
-
-<label>Nama Customer</label>
-
-<input id="bannerCustomer">
-
-</div>
-
-<div class="field">
-
-<label>Jumlah Meter</label>
-
-<input
-type="number"
-id="bannerMeter"
-min="0"
-step="0.01"
-value="1">
-
-</div>
-
-</div>
-
-
-<!-- STIKER -->
-
-<div id="stikerFields"
-class="order-grid"
-style="display:none">
-
-<div class="field">
-
-<label>Nama Customer</label>
-
-<input id="stikerCustomer">
-
-</div>
-
-<div class="field">
-
-<label>Jenis Stiker</label>
-
-<select id="stikerType">
-
-<option value="a3">
-Stiker A3
-</option>
-
-<option value="meter">
-Stiker Per Meter
-</option>
-
-</select>
-
-</div>
-
-<div class="field">
-
-<label>Jumlah</label>
-
-<input
-type="number"
-id="stikerQty"
-min="1"
-value="1">
-
-</div>
-
-</div>
-
-
-<!-- COMMON -->
-
-<div class="order-grid">
-
-<div class="field">
-
-<label>Waktu Masuk Order</label>
-
-<input
-type="datetime-local"
-id="orderDate"
-required>
-
-</div>
-
-<div class="field">
-
-<label>Deadline</label>
-
-<input
-type="datetime-local"
-id="deadline"
-required>
-
-</div>
-
-<div class="field">
-
-<label>Total Harga</label>
-
-<input
-type="number"
-id="totalPrice"
-readonly>
-
-</div>
-
-<div class="field">
-
-<label>DP Pembayaran</label>
-
-<input
-type="number"
-id="dp"
-value="0">
-
-</div>
-
-<div class="field">
-
-<label>Status</label>
-
-<select id="status">
-
-<option value="pending">
-Pending
-</option>
-
-<option value="proses">
-Proses
-</option>
-
-<option value="selesai">
-Selesai
-</option>
-
-</select>
-
-</div>
-
-<div class="field">
-
-<label>Sisa Pembayaran</label>
-
-<input
-type="number"
-id="remaining"
-readonly>
-
-</div>
-
-<div class="field full">
-
-<label>Upload Gambar / Desain</label>
-
-<label class="upload-box">
-
-📁 Klik untuk upload desain
-
-<input
-type="file"
-id="designImage"
-accept="image/*">
-
-<img
-id="previewImage"
-class="preview">
-
-</label>
-
-</div>
-
-<div class="field full">
-
-<label>Catatan</label>
-
-<textarea
-id="notes"
-rows="4"
-placeholder="Catatan order..."></textarea>
-
-</div>
-
-<div class="full">
-
-<button
-class="btn"
-type="submit"
-id="saveOrderBtn">
-
-💾 SIMPAN ORDER
-
-</button>
-
-</div>
-
-</div>
-
-</form>
-
-</div>
-
-
-<div class="panel">
-
-<h2>📋 Semua Order</h2>
-
-<div class="search">
-
-<input
-id="searchOrder"
-placeholder="🔎 Cari nama customer / jenis order...">
-
-</div>
-
-<div class="table-wrapper">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>No</th>
-<th>Customer</th>
-<th>Jenis</th>
-<th>Detail</th>
-<th>Jumlah</th>
-<th>Deadline</th>
-<th>Total</th>
-<th>DP</th>
-<th>Sisa</th>
-<th>Status</th>
-<th>Desain</th>
-<th>Aksi</th>
-
-</tr>
-
-</thead>
-
-<tbody id="orderTable"></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- ================= INCOME ================= -->
-
-<section id="incomeSection"
-class="section">
-
-<div class="panel">
-
-<h2>💰 Pemasukan Harian</h2>
-
-<form id="incomeForm">
-
-<div class="order-grid">
-
-<div class="field">
-
-<label>Tanggal</label>
-
-<input
-type="date"
-id="incomeDate"
-required>
-
-</div>
-
-<div class="field">
-
-<label>Customer</label>
-
-<input
-id="incomeCustomer"
-required>
-
-</div>
-
-<div class="field">
-
-<label>Keterangan</label>
-
-<input
-id="incomeDescription"
-placeholder="DP / Pelunasan / Cetak">
-
-</div>
-
-<div class="field">
-
-<label>Nominal</label>
-
-<input
-type="number"
-id="incomeAmount"
-required>
-
-</div>
-
-<div class="full">
-
-<button class="btn">
-💰 SIMPAN PEMASUKAN
-</button>
-
-</div>
-
-</div>
-
-</form>
-
-</div>
-
-
-<div class="panel">
-
-<h2>📅 Riwayat Pemasukan</h2>
-
-<div class="table-wrapper">
-
-<table>
-
-<thead>
-
-<tr>
-<th>No</th>
-<th>Tanggal</th>
-<th>Customer</th>
-<th>Keterangan</th>
-<th>Nominal</th>
-<th>Aksi</th>
-</tr>
-
-</thead>
-
-<tbody id="incomeTable"></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- ================= HARGA ================= -->
-
-<section id="priceSection"
-class="section">
-
-<div class="panel">
-
-<h2>⚙️ Pengaturan Harga</h2>
-
-<form id="priceForm">
-
-<div class="order-grid">
-
-<div class="field">
-
-<label>
-Harga Apparel Lengan Pendek
-</label>
-
-<input
-type="number"
-id="priceShort"
-value="75000">
-
-</div>
-
-<div class="field">
-
-<label>
-Harga Apparel Lengan Panjang
-</label>
-
-<input
-type="number"
-id="priceLong"
-value="85000">
-
-</div>
-
-<div class="field">
-
-<label>
-Harga Banner / Meter
-</label>
-
-<input
-type="number"
-id="priceBanner"
-value="35000">
-
-</div>
-
-<div class="field">
-
-<label>
-Harga Stiker A3
-</label>
-
-<input
-type="number"
-id="priceStickerA3"
-value="25000">
-
-</div>
-
-<div class="field">
-
-<label>
-Harga Stiker / Meter
-</label>
-
-<input
-type="number"
-id="priceStickerMeter"
-value="50000">
-
-</div>
-
-<div class="full">
-
-<button class="btn">
-💾 SIMPAN HARGA
-</button>
-
-</div>
-
-</div>
-
-</form>
-
-</div>
-
-</section>
-
-</main>
-
-</div>
-
 
 <script>
-
-/* =====================================================
-   DATA
-===================================================== */
-
-let orders =
-JSON.parse(localStorage.getItem("orders_v2") || "[]");
-
-let incomes =
-JSON.parse(localStorage.getItem("incomes_v2") || "[]");
-
-let prices =
-JSON.parse(localStorage.getItem("prices_v2") || "null") || {
-
-    short:75000,
-    long:85000,
-    banner:35000,
-    stickerA3:25000,
-    stickerMeter:50000
-
+/* ================= DATA & INITIALIZATION ================= */
+let orders = JSON.parse(localStorage.getItem("orders_v2") || "[]");
+let incomes = JSON.parse(localStorage.getItem("incomes_v2") || "[]");
+let prices = JSON.parse(localStorage.getItem("prices_v2") || "null") || {
+    short: 75000,
+    long: 85000,
+    banner: 35000,
+    stickerA3: 25000,
+    stickerMeter: 50000
 };
 
+let currentImageData = "";
 
-/* =====================================================
-   LOGIN
-===================================================== */
-
+/* ================= AUTHENTICATION ================= */
 function showSignup(){
-
     document.getElementById("loginBox").style.display="none";
-
     document.getElementById("signupBox").style.display="block";
-
 }
 
 function showLogin(){
-
     document.getElementById("signupBox").style.display="none";
-
     document.getElementById("loginBox").style.display="block";
-
 }
 
-
-document.getElementById("signupForm")
-.addEventListener("submit",function(e){
-
+document.getElementById("signupForm").addEventListener("submit", function(e){
     e.preventDefault();
-
-    const user={
-
-        name:
-        document.getElementById("signupName").value,
-
-        email:
-        document.getElementById("signupEmail").value,
-
-        password:
-        document.getElementById("signupPassword").value
-
+    const user = {
+        name: document.getElementById("signupName").value,
+        email: document.getElementById("signupEmail").value,
+        password: document.getElementById("signupPassword").value
     };
-
-    localStorage.setItem(
-        "apparelUser",
-        JSON.stringify(user)
-    );
-
-    document.getElementById("signupMessage")
-    .innerText="Akun berhasil dibuat.";
-
-    setTimeout(showLogin,800);
-
+    localStorage.setItem("apparelUser", JSON.stringify(user));
+    document.getElementById("signupMessage").innerText = "Akun berhasil dibuat.";
+    setTimeout(showLogin, 800);
 });
 
-
-document.getElementById("loginForm")
-.addEventListener("submit",function(e){
-
+document.getElementById("loginForm").addEventListener("submit", function(e){
     e.preventDefault();
-
-    const user =
-    JSON.parse(
-        localStorage.getItem("apparelUser") || "null"
-    );
-
+    const user = JSON.parse(localStorage.getItem("apparelUser") || "null");
     if(!user){
-
-        document.getElementById("loginMessage")
-        .innerText="Buat akun terlebih dahulu.";
-
+        document.getElementById("loginMessage").innerText = "Buat akun terlebih dahulu.";
         return;
-
     }
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
 
-    const email =
-    document.getElementById("loginEmail").value;
-
-    const password =
-    document.getElementById("loginPassword").value;
-
-    if(
-        email===user.email &&
-        password===user.password
-    ){
-
-        document.getElementById("loginPage")
-        .style.display="none";
-
-        document.getElementById("dashboard")
-        .style.display="block";
-
+    if(email === user.email && password === user.password){
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
         initialize();
-
-    }else{
-
-        document.getElementById("loginMessage")
-        .innerText="Email atau password salah.";
-
+    } else {
+        document.getElementById("loginMessage").innerText = "Email atau password salah.";
     }
-
 });
-
 
 function logout(){
-
-    document.getElementById("dashboard")
-    .style.display="none";
-
-    document.getElementById("loginPage")
-    .style.display="flex";
-
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("loginPage").style.display = "flex";
 }
 
+/* ================= NAVIGATION ================= */
+function showSection(id, button){
+    document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
 
-/* =====================================================
-   MENU
-===================================================== */
-
-function showSection(id,button){
-
-    document.querySelectorAll(".section")
-    .forEach(s=>s.classList.remove("active"));
-
-    document.getElementById(id)
-    .classList.add("active");
-
-    document.querySelectorAll(".menu button")
-    .forEach(b=>b.classList.remove("active"));
-
+    document.querySelectorAll(".menu button").forEach(b => b.classList.remove("active"));
     button.classList.add("active");
 
-    const titles={
-
-        dashboardSection:"Dashboard",
-
-        orderSection:"Data Order",
-
-        incomeSection:"Pemasukan Harian",
-
-        priceSection:"Pengaturan Harga"
-
+    const titles = {
+        dashboardSection: "Dashboard",
+        orderSection: "Data Order",
+        incomeSection: "Pemasukan Harian",
+        priceSection: "Pengaturan Harga"
     };
-
-    document.getElementById("pageTitle")
-    .innerText=titles[id];
-
+    document.getElementById("pageTitle").innerText = titles[id];
 }
 
-
-/* =====================================================
-   ORDER TYPE
-===================================================== */
-
-document.querySelectorAll(
-    'input[name="orderType"]'
-).forEach(input=>{
-
-    input.addEventListener("change",function(){
-
-        document.querySelectorAll(".type-card")
-        .forEach(c=>c.classList.remove("selected"));
-
+/* ================= ORDER TYPE SWITCHING ================= */
+document.querySelectorAll('input[name="orderType"]').forEach(input => {
+    input.addEventListener("change", function(){
+        document.querySelectorAll(".type-card").forEach(c => c.classList.remove("selected"));
         this.parentElement.classList.add("selected");
 
-        const type=this.value;
-
-        document.getElementById("apparelFields")
-        .style.display=type==="apparel"?"grid":"none";
-
-        document.getElementById("bannerFields")
-        .style.display=type==="banner"?"grid":"none";
-
-        document.getElementById("stikerFields")
-        .style.display=type==="stiker"?"grid":"none";
+        const type = this.value;
+        document.getElementById("apparelFields").style.display = type === "apparel" ? "grid" : "none";
+        document.getElementById("bannerFields").style.display = type === "banner" ? "grid" : "none";
+        document.getElementById("stikerFields").style.display = type === "stiker" ? "grid" : "none";
 
         calculatePrice();
-
     });
-
 });
 
-
-/* =====================================================
-   PRICE CALCULATION
-===================================================== */
-
+/* ================= CALCULATIONS ================= */
 function getOrderType(){
-
-    return document.querySelector(
-        'input[name="orderType"]:checked'
-    ).value;
-
+    const checked = document.querySelector('input[name="orderType"]:checked');
+    return checked ? checked.value : "apparel";
 }
-
 
 function calculatePrice(){
+    const type = getOrderType();
+    let total = 0;
 
-    const type=getOrderType();
-
-    let total=0;
-
-    if(type==="apparel"){
-
-        const sleeve=
-        document.getElementById("sleeve").value;
-
-        const qty=
-        Number(document.getElementById("quantity").value)||0;
-
-        const price=
-        sleeve==="panjang"
-        ?prices.long
-        :prices.short;
-
-        total=price*qty;
-
+    if(type === "apparel"){
+        const sleeve = document.getElementById("sleeve").value;
+        const qty = Number(document.getElementById("quantity").value) || 0;
+        const price = sleeve === "panjang" ? prices.long : prices.short;
+        total = price * qty;
+    } else if(type === "banner"){
+        const meter = Number(document.getElementById("bannerMeter").value) || 0;
+        total = prices.banner * meter;
+    } else if(type === "stiker"){
+        const stikerType = document.getElementById("stikerType").value;
+        const qty = Number(document.getElementById("stikerQty").value) || 0;
+        total = (stikerType === "a3" ? prices.stickerA3 : prices.stickerMeter) * qty;
     }
 
-    if(type==="banner"){
-
-        const meter=
-        Number(
-            document.getElementById("bannerMeter").value
-        )||0;
-
-        total=
-        prices.banner*meter;
-
-    }
-
-    if(type==="stiker"){
-
-        const stikerType=
-        document.getElementById("stikerType").value;
-
-        const qty=
-        Number(
-            document.getElementById("stikerQty").value
-        )||0;
-
-        if(stikerType==="a3"){
-
-            total=
-            prices.stickerA3*qty;
-
-        }else{
-
-            total=
-            prices.stickerMeter*qty;
-
-        }
-
-    }
-
-    document.getElementById("totalPrice")
-    .value=total;
-
+    document.getElementById("totalPrice").value = total;
     calculateRemaining();
-
 }
-
 
 function calculateRemaining(){
-
-    const total=
-    Number(
-        document.getElementById("totalPrice").value
-    )||0;
-
-    const dp=
-    Number(
-        document.getElementById("dp").value
-    )||0;
-
-    document.getElementById("remaining")
-    .value=Math.max(total-dp,0);
-
+    const total = Number(document.getElementById("totalPrice").value) || 0;
+    const dp = Number(document.getElementById("dp").value) || 0;
+    document.getElementById("remaining").value = Math.max(total - dp, 0);
 }
 
-
-[
-    "sleeve",
-    "quantity",
-    "bannerMeter",
-    "stikerType",
-    "stikerQty"
-].forEach(id=>{
-
-    document.getElementById(id)
-    .addEventListener("input",calculatePrice);
-
-    document.getElementById(id)
-    .addEventListener("change",calculatePrice);
-
+["sleeve", "quantity", "bannerMeter", "stikerType", "stikerQty"].forEach(id => {
+    const el = document.getElementById(id);
+    if(el){
+        el.addEventListener("input", calculatePrice);
+        el.addEventListener("change", calculatePrice);
+    }
 });
+document.getElementById("dp").addEventListener("input", calculateRemaining);
 
-document.getElementById("dp")
-.addEventListener("input",calculateRemaining);
+/* ================= IMAGE UPLOAD ================= */
+document.getElementById("designImage").addEventListener("change", function(){
+    const file = this.files[0];
+    if(!file) return;
 
-
-/* =====================================================
-   UPLOAD
-===================================================== */
-
-document.getElementById("designImage")
-.addEventListener("change",function(){
-
-    const file=this.files[0];
-
-    if(!file)return;
-
-    if(file.size>5*1024*1024){
-
-        alert(
-            "Ukuran gambar maksimal 5 MB."
-        );
-
-        this.value="";
-
+    if(file.size > 2 * 1024 * 1024){
+        alert("Ukuran gambar terlalu besar (Maksimal 2MB agar penyimpanan lancar).");
+        this.value = "";
         return;
-
     }
 
-    const reader=new FileReader();
+    const reader = new FileReader();
+    reader.onload = function(e){
+        currentImageData = e.target.result;
+        const img = document.getElementById("previewImage");
+        img.src = currentImageData;
+        img.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+});
 
-    reader.onload=function(e){
+/* ================= SAVE & EDIT ORDER ================= */
+document.getElementById("orderForm").addEventListener("submit", function(e){
+    e.preventDefault();
 
-        const img=
-        document.getElementById("previewImage");
+    const type = getOrderType();
+    let customer = "";
+    let detail = "";
+    let quantity = 1;
 
-        img.src=e.target.result;
+    if(type === "apparel"){
+        customer = document.getElementById("customer").value.trim();
+        detail = document.getElementById("sleeve").value === "panjang" ? "Lengan Panjang" : "Lengan Pendek";
+        quantity = Number(document.getElementById("quantity").value) || 1;
+    } else if(type === "banner"){
+        customer = document.getElementById("bannerCustomer").value.trim();
+        quantity = Number(document.getElementById("bannerMeter").value) || 0;
+        detail = quantity + " meter";
+    } else if(type === "stiker"){
+        customer = document.getElementById("stikerCustomer").value.trim();
+        quantity = Number(document.getElementById("stikerQty").value) || 1;
+        detail = document.getElementById("stikerType").value === "a3" ? "Stiker A3" : "Stiker per Meter";
+    }
 
-        img.style.display="block";
+    if(!customer){
+        alert("Nama customer wajib diisi!");
+        return;
+    }
 
+    const editId = document.getElementById("editId").value;
+    
+    const orderData = {
+        id: editId ? editId : String(Date.now()),
+        type: type,
+        customer: customer,
+        phone: document.getElementById("phone").value || "",
+        sleeve: document.getElementById("sleeve").value,
+        collar: document.getElementById("collar").value,
+        material: document.getElementById("material").value,
+        quantity: quantity,
+        detail: detail,
+        orderDate: document.getElementById("orderDate").value,
+        deadline: document.getElementById("deadline").value,
+        total: Number(document.getElementById("totalPrice").value) || 0,
+        dp: Number(document.getElementById("dp").value) || 0,
+        remaining: Number(document.getElementById("remaining").value) || 0,
+        status: document.getElementById("status").value,
+        notes: document.getElementById("notes").value || "",
+        image: currentImageData
     };
 
-    reader.readAsDataURL(file);
-
+    saveOrder(orderData);
 });
 
-
-/* =====================================================
-   SAVE ORDER
-===================================================== */
-
-document.getElementById("orderForm")
-.addEventListener("submit",function(e){
-
-    e.preventDefault();
-
-    try{
-
-        const type=getOrderType();
-
-        let customer="";
-
-        let detail="";
-
-        let quantity=1;
-
-        if(type==="apparel"){
-
-            customer=
-            document.getElementById("customer").value.trim();
-
-            detail=
-            document.getElementById("sleeve").value==="panjang"
-            ? "Lengan Panjang"
-            : "Lengan Pendek";
-
-            quantity=
-            Number(
-                document.getElementById("quantity").value
-            )||1;
-
-        }
-
-        if(type==="banner"){
-
-            customer=
-            document.getElementById("bannerCustomer").value.trim();
-
-            quantity=
-            Number(
-                document.getElementById("bannerMeter").value
-            )||0;
-
-            detail=
-            quantity+" meter";
-
-        }
-
-        if(type==="stiker"){
-
-            customer=
-            document.getElementById("stikerCustomer").value.trim();
-
-            quantity=
-            Number(
-                document.getElementById("stikerQty").value
-            )||1;
-
-            detail=
-            document.getElementById("stikerType").value==="a3"
-            ? "Stiker A3"
-            : "Stiker per Meter";
-
-        }
-
-        if(!customer){
-
-            alert("Nama customer wajib diisi.");
-
-            return;
-
-        }
-
-        const order={
-
-            id:
-            document.getElementById("editId").value
-            ||Date.now(),
-
-            type:type,
-
-            customer:customer,
-
-            phone:
-            document.getElementById("phone").value,
-
-            sleeve:
-            document.getElementById("sleeve").value,
-
-            collar:
-            document.getElementById("collar").value,
-
-            material:
-            document.getElementById("material").value,
-
-            quantity:quantity,
-
-            detail:detail,
-
-            orderDate:
-            document.getElementById("orderDate").value,
-
-            deadline:
-            document.getElementById("deadline").value,
-
-            total:
-            Number(
-                document.getElementById("totalPrice").value
-            )||0,
-
-            dp:
-            Number(
-                document.getElementById("dp").value
-            )||0,
-
-            remaining:
-            Number(
-                document.getElementById("remaining").value
-            )||0,
-
-            status:
-            document.getElementById("status").value,
-
-            notes:
-            document.getElementById("notes").value
-
-        };
-
-
-        const file=
-        document.getElementById("designImage").files[0];
-
-
-        if(file){
-
-            const reader=new FileReader();
-
-            reader.onload=function(){
-
-                order.image=reader.result;
-
-                saveOrder(order);
-
-            };
-
-            reader.readAsDataURL(file);
-
-        }else{
-
-            saveOrder(order);
-
-        }
-
-    }catch(error){
-
-        console.error(error);
-
-        alert(
-            "Terjadi kesalahan saat menyimpan order."
-        );
-
-    }
-
-});
-
-
-function saveOrder(order){
-
-    const editId=
-    document.getElementById("editId").value;
+function saveOrder(orderObj){
+    const editId = document.getElementById("editId").value;
 
     if(editId){
-
-        const index=
-        orders.findIndex(
-            o=>String(o.id)===String(editId)
-        );
-
-        if(index!==-1){
-
-            if(!order.image &&
-               orders[index].image){
-
-                order.image=
-                orders[index].image;
-
+        const index = orders.findIndex(o => String(o.id) === String(editId));
+        if(index !== -1){
+            if(!orderObj.image && orders[index].image){
+                orderObj.image = orders[index].image;
             }
-
-            orders[index]=order;
-
+            orders[index] = orderObj;
         }
-
-    }else{
-
-        orders.push(order);
-
+    } else {
+        orders.push(orderObj);
     }
 
-    try{
-
-        localStorage.setItem(
-            "orders_v2",
-            JSON.stringify(orders)
-        );
-
-    }catch(error){
-
-        alert(
-            "Penyimpanan browser penuh. " +
-            "Coba hapus beberapa order lama."
-        );
-
-        return;
-
+    try {
+        localStorage.setItem("orders_v2", JSON.stringify(orders));
+        alert("✅ Order berhasil disimpan!");
+        resetOrderForm();
+        renderOrders();
+        updateDashboard();
+    } catch(error) {
+        alert("Gagal menyimpan data ke browser! Penyimpanan browser (LocalStorage) mungkin sudah penuh. Coba hapus beberapa order lama atau gunakan gambar berukuran lebih kecil.");
     }
-
-    alert("✅ Order berhasil disimpan!");
-
-    resetOrderForm();
-
-    renderOrders();
-
-    updateDashboard();
-
 }
-
-
-/* =====================================================
-   EDIT ORDER
-===================================================== */
 
 function editOrder(id){
+    const o = orders.find(x => String(x.id) === String(id));
+    if(!o) return;
 
-    const o=
-    orders.find(
-        x=>String(x.id)===String(id)
-    );
+    document.getElementById("editId").value = o.id;
 
-    if(!o)return;
-
-    document.getElementById("editId").value=o.id;
-
-    document.querySelector(
-        `input[name="orderType"][value="${o.type}"]`
-    ).checked=true;
-
-    document.querySelectorAll(".type-card")
-    .forEach(c=>c.classList.remove("selected"));
-
-    document.querySelector(
-        `input[name="orderType"][value="${o.type}"]`
-    ).parentElement.classList.add("selected");
-
-
-    document.getElementById("apparelFields")
-    .style.display=o.type==="apparel"?"grid":"none";
-
-    document.getElementById("bannerFields")
-    .style.display=o.type==="banner"?"grid":"none";
-
-    document.getElementById("stikerFields")
-    .style.display=o.type==="stiker"?"grid":"none";
-
-
-    if(o.type==="apparel"){
-
-        document.getElementById("customer").value=o.customer;
-
-        document.getElementById("phone").value=o.phone||"";
-
-        document.getElementById("sleeve").value=o.sleeve;
-
-        document.getElementById("collar").value=o.collar;
-
-        document.getElementById("material").value=o.material;
-
-        document.getElementById("quantity").value=o.quantity;
-
+    const radio = document.querySelector(`input[name="orderType"][value="${o.type}"]`);
+    if(radio) {
+        radio.checked = true;
+        document.querySelectorAll(".type-card").forEach(c => c.classList.remove("selected"));
+        radio.parentElement.classList.add("selected");
     }
 
-    if(o.type==="banner"){
+    document.getElementById("apparelFields").style.display = o.type === "apparel" ? "grid" : "none";
+    document.getElementById("bannerFields").style.display = o.type === "banner" ? "grid" : "none";
+    document.getElementById("stikerFields").style.display = o.type === "stiker" ? "grid" : "none";
 
-        document.getElementById("bannerCustomer").value=o.customer;
-
-        document.getElementById("bannerMeter").value=o.quantity;
-
+    if(o.type === "apparel"){
+        document.getElementById("customer").value = o.customer;
+        document.getElementById("phone").value = o.phone || "";
+        document.getElementById("sleeve").value = o.sleeve || "pendek";
+        document.getElementById("collar").value = o.collar || "O-Neck";
+        document.getElementById("material").value = o.material || "Dryfit";
+        document.getElementById("quantity").value = o.quantity;
+    } else if(o.type === "banner"){
+        document.getElementById("bannerCustomer").value = o.customer;
+        document.getElementById("bannerMeter").value = o.quantity;
+    } else if(o.type === "stiker"){
+        document.getElementById("stikerCustomer").value = o.customer;
+        document.getElementById("stikerQty").value = o.quantity;
+        document.getElementById("stikerType").value = o.detail.includes("A3") ? "a3" : "meter";
     }
 
-    if(o.type==="stiker"){
+    document.getElementById("orderDate").value = o.orderDate || "";
+    document.getElementById("deadline").value = o.deadline || "";
+    document.getElementById("dp").value = o.dp;
+    document.getElementById("status").value = o.status;
+    document.getElementById("notes").value = o.notes || "";
+    document.getElementById("totalPrice").value = o.total;
+    document.getElementById("remaining").value = o.remaining;
 
-        document.getElementById("stikerCustomer").value=o.customer;
-
-        document.getElementById("stikerQty").value=o.quantity;
-
-        document.getElementById("stikerType").value=
-        o.detail.includes("A3")
-        ?"a3"
-        :"meter";
-
+    if(o.image){
+        currentImageData = o.image;
+        const img = document.getElementById("previewImage");
+        img.src = o.image;
+        img.style.display = "block";
     }
 
-    document.getElementById("orderDate").value=o.orderDate;
-
-    document.getElementById("deadline").value=o.deadline;
-
-    document.getElementById("dp").value=o.dp;
-
-    document.getElementById("status").value=o.status;
-
-    document.getElementById("notes").value=o.notes||"";
-
-    document.getElementById("totalPrice").value=o.total;
-
-    document.getElementById("remaining").value=o.remaining;
-
-    document.getElementById("saveOrderBtn")
-    .innerText="✏️ UPDATE ORDER";
-
-    document.getElementById("orderSection")
-    .scrollIntoView();
-
+    document.getElementById("saveOrderBtn").innerText = "✏️ UPDATE ORDER";
+    document.getElementById("orderSection").scrollIntoView({ behavior: 'smooth' });
 }
-
-
-/* =====================================================
-   DELETE ORDER
-===================================================== */
 
 function deleteOrder(id){
-
-    if(!confirm("Hapus order ini?"))return;
-
-    orders=
-    orders.filter(
-        o=>String(o.id)!==String(id)
-    );
-
-    localStorage.setItem(
-        "orders_v2",
-        JSON.stringify(orders)
-    );
-
+    if(!confirm("Hapus order ini?")) return;
+    orders = orders.filter(o => String(o.id) !== String(id));
+    localStorage.setItem("orders_v2", JSON.stringify(orders));
     renderOrders();
-
     updateDashboard();
-
 }
-
-
-/* =====================================================
-   RESET
-===================================================== */
 
 function resetOrderForm(){
-
     document.getElementById("orderForm").reset();
+    document.getElementById("editId").value = "";
+    currentImageData = "";
+    document.getElementById("previewImage").style.display = "none";
+    document.getElementById("saveOrderBtn").innerText = "💾 SIMPAN ORDER";
 
-    document.getElementById("editId").value="";
+    const defaultRadio = document.querySelector('input[name="orderType"][value="apparel"]');
+    if(defaultRadio){
+        defaultRadio.checked = true;
+        document.querySelectorAll(".type-card").forEach(c => c.classList.remove("selected"));
+        defaultRadio.parentElement.classList.add("selected");
+    }
 
-    document.getElementById("totalPrice").value="";
-
-    document.getElementById("remaining").value="";
-
-    document.getElementById("previewImage")
-    .style.display="none";
-
-    document.getElementById("saveOrderBtn")
-    .innerText="💾 SIMPAN ORDER";
-
-    document.querySelector(
-        'input[name="orderType"][value="apparel"]'
-    ).checked=true;
-
-    document.getElementById("apparelFields")
-    .style.display="grid";
-
-    document.getElementById("bannerFields")
-    .style.display="none";
-
-    document.getElementById("stikerFields")
-    .style.display="none";
-
+    document.getElementById("apparelFields").style.display = "grid";
+    document.getElementById("bannerFields").style.display = "none";
+    document.getElementById("stikerFields").style.display = "none";
+    
+    calculatePrice();
 }
 
-
-/* =====================================================
-   RENDER ORDER
-===================================================== */
-
+/* ================= RENDER TABLES ================= */
 function renderOrders(){
-
-    const table=
-    document.getElementById("orderTable");
-
-    const search=
-    document.getElementById("searchOrder")
-    .value.toLowerCase();
-
-    table.innerHTML="";
+    const table = document.getElementById("orderTable");
+    const search = document.getElementById("searchOrder").value.toLowerCase();
+    table.innerHTML = "";
 
     orders
-    .filter(o=>
-        o.customer.toLowerCase().includes(search) ||
-        o.type.toLowerCase().includes(search)
-    )
-    .forEach((o,index)=>{
+    .filter(o => o.customer.toLowerCase().includes(search) || o.type.toLowerCase().includes(search))
+    .forEach((o, index) => {
+        let typeLabel = "👕 Apparel";
+        if(o.type === "banner") typeLabel = "🖼️ Banner";
+        if(o.type === "stiker") typeLabel = "🏷️ Stiker";
 
-        let typeLabel="";
-
-        if(o.type==="apparel")
-            typeLabel="👕 Apparel";
-
-        if(o.type==="banner")
-            typeLabel="🖼️ Banner";
-
-        if(o.type==="stiker")
-            typeLabel="🏷️ Stiker";
-
-        const tr=
-        document.createElement("tr");
-
-        tr.innerHTML=`
-
-        <td>${index+1}</td>
-
-        <td>${escapeHtml(o.customer)}</td>
-
-        <td>${typeLabel}</td>
-
-        <td>${escapeHtml(o.detail||"-")}</td>
-
-        <td>${o.quantity}</td>
-
-        <td>${formatDate(o.deadline)}</td>
-
-        <td>${rupiah(o.total)}</td>
-
-        <td>${rupiah(o.dp)}</td>
-
-        <td>${rupiah(o.remaining)}</td>
-
-        <td>
-            <span class="status ${o.status}">
-                ${o.status}
-            </span>
-        </td>
-
-        <td>
-            ${
-                o.image
-                ? `<button class="action-btn view"
-                   onclick="viewImage('${o.id}')">
-                   Lihat
-                   </button>`
-                : "-"
-            }
-        </td>
-
-        <td>
-
-            <button
-            class="action-btn edit"
-            onclick="editOrder('${o.id}')">
-            Edit
-            </button>
-
-            <button
-            class="action-btn delete"
-            onclick="deleteOrder('${o.id}')">
-            Hapus
-            </button>
-
-        </td>
-
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${escapeHtml(o.customer)}</td>
+            <td>${typeLabel}</td>
+            <td>${escapeHtml(o.detail || "-")}</td>
+            <td>${o.quantity}</td>
+            <td>${formatDate(o.deadline)}</td>
+            <td>${rupiah(o.total)}</td>
+            <td>${rupiah(o.dp)}</td>
+            <td>${rupiah(o.remaining)}</td>
+            <td><span class="status ${o.status}">${o.status}</span></td>
+            <td>
+                ${o.image ? `<button class="action-btn view" onclick="viewImage('${o.id}')">👁️ Lihat</button>` : "-"}
+            </td>
+            <td>
+                <button class="action-btn edit" onclick="editOrder('${o.id}')">✏️</button>
+                <button class="action-btn delete" onclick="deleteOrder('${o.id}')">🗑️</button>
+            </td>
         `;
-
         table.appendChild(tr);
-
     });
-
 }
 
+document.getElementById("searchOrder").addEventListener("input", renderOrders);
 
-function viewImage(id){
+/* ================= DASHBOARD UPDATES ================= */
+function updateDashboard(){
+    document.getElementById("totalOrder").innerText = orders.length;
+    document.getElementById("totalProses").innerText = orders.filter(o => o.status === "proses").length;
+    document.getElementById("totalSelesai").innerText = orders.filter(o => o.status === "selesai").length;
 
-    const o=
-    orders.find(
-        x=>String(x.id)===String(id)
-    );
+    const totalIncome = incomes.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+    document.getElementById("totalIncome").innerText = rupiah(totalIncome);
 
-    if(!o||!o.image)return;
-
-    const win=
-    window.open();
-
-    win.document.write(
-        `<img src="${o.image}"
-        style="max-width:100%">`
-    );
-
+    renderDashboardOrders();
 }
 
+function renderDashboardOrders(){
+    const tbody = document.getElementById("dashboardOrders");
+    tbody.innerHTML = "";
 
-/* =====================================================
-   SEARCH
-===================================================== */
+    orders.slice(-5).reverse().forEach(o => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${escapeHtml(o.customer)}</td>
+            <td>${o.type}</td>
+            <td>${formatDate(o.deadline)}</td>
+            <td>${rupiah(o.total)}</td>
+            <td>${rupiah(o.dp)}</td>
+            <td><span class="status ${o.status}">${o.status}</span></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
 
-document.getElementById("searchOrder")
-.addEventListener("input",renderOrders);
-
-
-/* =====================================================
-   INCOME
-===================================================== */
-
-document.getElementById("incomeForm")
-.addEventListener("submit",function(e){
-
+/* ================= INCOME SECTION ================= */
+document.getElementById("incomeForm").addEventListener("submit", function(e){
     e.preventDefault();
 
-    const income={
-
-        id:Date.now(),
-
-        date:
-        document.getElementById("incomeDate").value,
-
-        customer:
-        document.getElementById("incomeCustomer").value,
-
-        description:
-        document.getElementById("incomeDescription").value,
-
-        amount:
-        Number(
-            document.getElementById("incomeAmount").value
-        )||0
-
+    const income = {
+        id: String(Date.now()),
+        date: document.getElementById("incomeDate").value,
+        customer: document.getElementById("incomeCustomer").value,
+        description: document.getElementById("incomeDescription").value,
+        amount: Number(document.getElementById("incomeAmount").value) || 0
     };
 
     incomes.push(income);
-
-    localStorage.setItem(
-        "incomes_v2",
-        JSON.stringify(incomes)
-    );
-
-    alert("✅ Pemasukan berhasil disimpan!");
+    localStorage.setItem("incomes_v2", JSON.stringify(incomes));
 
     this.reset();
-
-    setToday();
-
-    renderIncome();
-
+    renderIncomes();
     updateDashboard();
-
+    alert("✅ Pemasukan berhasil disimpan!");
 });
 
+function renderIncomes(){
+    const tbody = document.getElementById("incomeTable");
+    tbody.innerHTML = "";
 
-function renderIncome(){
-
-    const table=
-    document.getElementById("incomeTable");
-
-    table.innerHTML="";
-
-    incomes.forEach((i,index)=>{
-
-        const tr=
-        document.createElement("tr");
-
-        tr.innerHTML=`
-
-        <td>${index+1}</td>
-
-        <td>${i.date}</td>
-
-        <td>${escapeHtml(i.customer)}</td>
-
-        <td>${escapeHtml(i.description)}</td>
-
-        <td>${rupiah(i.amount)}</td>
-
-        <td>
-
-            <button
-            class="action-btn delete"
-            onclick="deleteIncome('${i.id}')">
-            Hapus
-            </button>
-
-        </td>
-
+    incomes.forEach((inc, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${formatDate(inc.date)}</td>
+            <td>${escapeHtml(inc.customer)}</td>
+            <td>${escapeHtml(inc.description || "-")}</td>
+            <td>${rupiah(inc.amount)}</td>
+            <td>
+                <button class="action-btn delete" onclick="deleteIncome('${inc.id}')">🗑️</button>
+            </td>
         `;
-
-        table.appendChild(tr);
-
+        tbody.appendChild(tr);
     });
-
 }
-
 
 function deleteIncome(id){
-
-    if(!confirm("Hapus pemasukan ini?"))return;
-
-    incomes=
-    incomes.filter(
-        i=>String(i.id)!==String(id)
-    );
-
-    localStorage.setItem(
-        "incomes_v2",
-        JSON.stringify(incomes)
-    );
-
-    renderIncome();
-
+    if(!confirm("Hapus catatan pemasukan ini?")) return;
+    incomes = incomes.filter(inc => String(inc.id) !== String(id));
+    localStorage.setItem("incomes_v2", JSON.stringify(incomes));
+    renderIncomes();
     updateDashboard();
-
 }
 
-
-/* =====================================================
-   PRICES
-===================================================== */
-
-function loadPrices(){
-
-    document.getElementById("priceShort").value=
-    prices.short;
-
-    document.getElementById("priceLong").value=
-    prices.long;
-
-    document.getElementById("priceBanner").value=
-    prices.banner;
-
-    document.getElementById("priceStickerA3").value=
-    prices.stickerA3;
-
-    document.getElementById("priceStickerMeter").value=
-    prices.stickerMeter;
-
-}
-
-
-document.getElementById("priceForm")
-.addEventListener("submit",function(e){
-
+/* ================= PRICE SETTINGS ================= */
+document.getElementById("priceForm").addEventListener("submit", function(e){
     e.preventDefault();
 
-    prices={
-
-        short:
-        Number(
-            document.getElementById("priceShort").value
-        )||0,
-
-        long:
-        Number(
-            document.getElementById("priceLong").value
-        )||0,
-
-        banner:
-        Number(
-            document.getElementById("priceBanner").value
-        )||0,
-
-        stickerA3:
-        Number(
-            document.getElementById("priceStickerA3").value
-        )||0,
-
-        stickerMeter:
-        Number(
-            document.getElementById("priceStickerMeter").value
-        )||0
-
+    prices = {
+        short: Number(document.getElementById("priceShort").value) || 0,
+        long: Number(document.getElementById("priceLong").value) || 0,
+        banner: Number(document.getElementById("priceBanner").value) || 0,
+        stickerA3: Number(document.getElementById("priceStickerA3").value) || 0,
+        stickerMeter: Number(document.getElementById("priceStickerMeter").value) || 0
     };
 
-    localStorage.setItem(
-        "prices_v2",
-        JSON.stringify(prices)
-    );
-
-    calculatePrice();
-
-    alert("✅ Harga berhasil disimpan!");
-
+    localStorage.setItem("prices_v2", JSON.stringify(prices));
+    alert("⚙️ Pengaturan harga berhasil disimpan!");
 });
 
-
-/* =====================================================
-   DASHBOARD
-===================================================== */
-
-function updateDashboard(){
-
-    document.getElementById("totalOrder")
-    .innerText=orders.length;
-
-    document.getElementById("totalProses")
-    .innerText=
-    orders.filter(
-        o=>o.status==="proses"
-    ).length;
-
-    document.getElementById("totalSelesai")
-    .innerText=
-    orders.filter(
-        o=>o.status==="selesai"
-    ).length;
-
-    const total=
-    incomes.reduce(
-        (sum,i)=>sum+Number(i.amount||0),
-        0
-    );
-
-    document.getElementById("totalIncome")
-    .innerText=rupiah(total);
-
-
-    const table=
-    document.getElementById("dashboardOrders");
-
-    table.innerHTML="";
-
-    orders
-    .slice()
-    .reverse()
-    .slice(0,5)
-    .forEach(o=>{
-
-        const tr=
-        document.createElement("tr");
-
-        tr.innerHTML=`
-
-        <td>${escapeHtml(o.customer)}</td>
-
-        <td>${o.type}</td>
-
-        <td>${formatDate(o.deadline)}</td>
-
-        <td>${rupiah(o.total)}</td>
-
-        <td>${rupiah(o.dp)}</td>
-
-        <td>
-            <span class="status ${o.status}">
-                ${o.status}
-            </span>
-        </td>
-
-        `;
-
-        table.appendChild(tr);
-
-    });
-
+function loadPrices(){
+    document.getElementById("priceShort").value = prices.short;
+    document.getElementById("priceLong").value = prices.long;
+    document.getElementById("priceBanner").value = prices.banner;
+    document.getElementById("priceStickerA3").value = prices.stickerA3;
+    document.getElementById("priceStickerMeter").value = prices.stickerMeter;
 }
 
-
-/* =====================================================
-   UTILITIES
-===================================================== */
-
+/* ================= HELPERS & UTILS ================= */
 function rupiah(number){
-
-    return new Intl.NumberFormat(
-        "id-ID",
-        {
-            style:"currency",
-            currency:"IDR",
-            maximumFractionDigits:0
-        }
-    ).format(number||0);
-
+    return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(number || 0);
 }
 
-
-function formatDate(date){
-
-    if(!date)return "-";
-
-    return new Date(date)
-    .toLocaleString(
-        "id-ID",
-        {
-            day:"2-digit",
-            month:"2-digit",
-            year:"numeric",
-            hour:"2-digit",
-            minute:"2-digit"
-        }
-    );
-
+function formatDate(dateStr){
+    if(!dateStr) return "-";
+    const date = new Date(dateStr);
+    return isNaN(date.getTime()) ? dateStr : date.toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
 }
-
 
 function escapeHtml(text){
-
-    return String(text||"")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-
+    return String(text || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
-
-function setToday(){
-
-    const now=new Date();
-
-    const local=
-    new Date(
-        now.getTime()-
-        now.getTimezoneOffset()*60000
-    );
-
-    const date=
-    local.toISOString();
-
-    document.getElementById("incomeDate")
-    .value=date.slice(0,10);
-
-    document.getElementById("orderDate")
-    .value=date.slice(0,16);
-
-    document.getElementById("today")
-    .innerText=
-    now.toLocaleDateString("id-ID");
-
+function viewImage(id){
+    const o = orders.find(x => String(x.id) === String(id));
+    if(o && o.image){
+        const win = window.open("");
+        win.document.write(`<body style="margin:0; background:#050510; display:flex; justify-content:center; align-items:center; min-height:100vh;"><img src="${o.image}" style="max-width:90%; max-height:90vh; border-radius:8px; box-shadow:0 0 20px rgba(0,255,255,0.3);"></body>`);
+    }
 }
-
-
-/* =====================================================
-   INITIALIZE
-===================================================== */
 
 function initialize(){
-
-    setToday();
-
     loadPrices();
-
+    calculatePrice();
     renderOrders();
-
-    renderIncome();
-
+    renderIncomes();
     updateDashboard();
 
-    calculatePrice();
-
+    const now = new Date();
+    document.getElementById("today").innerText = now.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 }
-
-
-/* =====================================================
-   DEFAULT TYPE
-===================================================== */
-
-document.querySelector(
-    'input[name="orderType"][value="apparel"]'
-).parentElement.classList.add("selected");
-
 </script>
-
 </body>
 </html>
-```
